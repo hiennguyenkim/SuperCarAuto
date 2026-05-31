@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bộ Sưu Tập Siêu Xe — SuperCar Luxury</title>
+  <meta name="description" content="Danh sách đầy đủ các mẫu xe thể thao, siêu xe, hypercar đang có mặt tại showroom. Bộ lọc hãng xe, giá xe chi tiết.">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/public/css/style.css">
+  <link rel="stylesheet" href="/public/css/cars.css">
+  <link rel="stylesheet" href="/public/css/responsive.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="nav-container">
+      <a href="/" class="logo">
+        <span class="logo-text">SUPERCAR<span>LUXURY</span></span>
+      </a>
+      <nav>
+        <ul class="nav-menu">
+          <li class="nav-item"><a href="/">Trang Chủ</a></li>
+          <li class="nav-item active"><a href="/views/cars.html">Bộ Sưu Tập Xe</a></li>
+          <li class="nav-item"><a href="/views/compare.html">So Sánh</a></li>
+          <li class="nav-item"><a href="/views/finance.html">Trả Góp</a></li>
+          <li class="nav-item"><a href="/views/consignment.html">Ký Gửi</a></li>
+          <li class="nav-item"><a href="/views/contact.html">Liên Hệ</a></li>
+        </ul>
+      </nav>
+      <div class="nav-buttons" id="nav-auth-buttons">
+        <!-- Loaded dynamically -->
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Catalog Layout -->
+  <main class="container catalog-section section-padding">
+    <div class="section-header" style="text-align: left; margin-bottom: 20px;">
+      <span class="subtitle">Kho Hàng Showroom</span>
+      <h2>Khám Phá Các Dòng Xe Đỉnh Cao</h2>
+    </div>
+
+    <div class="catalog-layout">
+      <!-- Sidebar Filters -->
+      <aside class="filter-sidebar">
+        <div class="filter-group">
+          <h4>Tìm Kiếm Xe</h4>
+          <input type="text" id="catalog-search-input" placeholder="Tên xe, dòng xe, mã xe..." style="width: 100%; background: var(--bg-input); border: 1px solid var(--color-light-gray); color: var(--color-white); padding: 12px; border-radius: 4px; font-size: 0.85rem;">
+        </div>
+
+        <div class="filter-group">
+          <h4>Hãng Sản Xuất</h4>
+          <div class="checkbox-list" id="filter-brand-list">
+            <!-- Loaded dynamically from cars.js -->
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <h4>Kiểu Dáng</h4>
+          <div class="checkbox-list" id="filter-category-list">
+            <!-- Loaded dynamically from cars.js -->
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <h4>Khoảng Giá (Triệu VND)</h4>
+          <div class="price-inputs">
+            <input type="number" id="filter-min-price" placeholder="Min (Ví dụ: 5000)">
+            <span style="color: var(--color-silver);">–</span>
+            <input type="number" id="filter-max-price" placeholder="Max (Ví dụ: 30000)">
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <h4>Tình Trạng</h4>
+          <div class="checkbox-list">
+            <label class="checkbox-item">
+              <input type="radio" name="condition" value="" checked>
+              <span>Tất cả trạng thái</span>
+            </label>
+            <label class="checkbox-item">
+              <input type="radio" name="condition" value="new">
+              <span>Siêu xe mới 100%</span>
+            </label>
+            <label class="checkbox-item">
+              <input type="radio" name="condition" value="used">
+              <span>Đã qua sử dụng</span>
+            </label>
+            <label class="checkbox-item">
+              <input type="radio" name="condition" value="consignment">
+              <span>Xe ký gửi VIP</span>
+            </label>
+            <label class="checkbox-item">
+              <input type="radio" name="condition" value="imported">
+              <span>Nhập khẩu độc quyền</span>
+            </label>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Cars Display Area -->
+      <section class="cars-display">
+        <div class="cars-grid-header">
+          <div class="cars-count" id="catalog-cars-count">Đang tải số lượng xe...</div>
+          <div class="sort-select">
+            <select id="catalog-sort-select">
+              <option value="newest">Mới Nhất</option>
+              <option value="price_asc">Giá: Thấp đến Cao</option>
+              <option value="price_desc">Giá: Cao đến Thấp</option>
+              <option value="mileage_asc">Số km thấp nhất</option>
+              <option value="horsepower_desc">Công suất cao nhất</option>
+              <option value="view_desc">Xem nhiều nhất</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="cars-grid" id="catalog-cars-grid">
+          <!-- Loaded dynamically from cars.js -->
+        </div>
+
+        <div class="pagination-wrapper" id="catalog-pagination">
+          <!-- Loaded dynamically from cars.js -->
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-container">
+      <div class="footer-logo-desc">
+        <span class="logo-text">SUPERCAR<span>LUXURY</span></span>
+        <p>Hệ thống showroom chuyên phân phối các mẫu siêu xe, xe sang, hypercar chính hãng hàng đầu tại Việt Nam.</p>
+      </div>
+      <div class="footer-section">
+        <h3>Showroom</h3>
+        <ul class="footer-links">
+          <li><a href="/views/cars.html">Mua Xe</a></li>
+          <li><a href="/views/consignment.html">Ký Gửi Siêu Xe</a></li>
+          <li><a href="/views/finance.html">Trả Góp Tài Chính</a></li>
+          <li><a href="/views/contact.html">Liên Hệ Hỗ Trợ</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>Điều Khoản</h3>
+        <ul class="footer-links">
+          <li><a href="/views/policy.html">Chính Sách Bảo Mật</a></li>
+          <li><a href="/views/policy.html">Điều Khoản Đặt Cọc</a></li>
+          <li><a href="/views/faq.html">Câu Hỏi Thường Gặp</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>Thông Tin Liên Hệ</h3>
+        <ul class="footer-contact-info">
+          <li><i class="fas fa-map-marker-alt"></i> 88 Lê Văn Lương, Thanh Xuân, Hà Nội</li>
+          <li><i class="fas fa-phone"></i> Hotline: 1900 8888</li>
+          <li><i class="fas fa-envelope"></i> Email: info@supercarluxury.vn</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 SuperCar Luxury. All Rights Reserved.</p>
+    </div>
+  </footer>
+
+  <script src="/public/js/toast.js"></script>
+  <script src="/public/js/main.js"></script>
+  <script src="/public/js/wishlist.js"></script>
+  <script src="/public/js/cars.js"></script>
+</body>
+</html>

@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bảng Điều Khiển Khách Hàng — SuperCar Luxury</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/public/css/style.css">
+  <link rel="stylesheet" href="/public/css/auth.css">
+  <link rel="stylesheet" href="/public/css/cars.css">
+  <link rel="stylesheet" href="/public/css/dashboard.css">
+  <link rel="stylesheet" href="/public/css/responsive.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="nav-container">
+      <a href="/" class="logo">
+        <span class="logo-text">SUPERCAR<span>LUXURY</span></span>
+      </a>
+      <div class="nav-buttons">
+        <a href="/" class="btn-dark" style="padding: 10px 20px; font-size: 0.75rem;"><i class="fas fa-home"></i> Trang Chủ</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Dashboard Container -->
+  <div class="dashboard-section">
+    <div class="dashboard-layout">
+      <!-- Sidebar Navigation -->
+      <div id="sidebar"></div>
+
+      <!-- Main Dashboard Content Panel -->
+      <main class="dashboard-content">
+        <!-- 0. Overview Tab -->
+        <div class="dashboard-content-tab" id="tab-overview">
+          <div class="dashboard-tab-header">
+            <h2>Tổng Quan Hoạt Động</h2>
+          </div>
+          <div class="stats-cards-grid">
+            <div class="stat-card">
+              <div class="stat-card-left">
+                <h4>Đơn Hàng Của Tôi</h4>
+                <div class="number" id="user-stat-orders">0</div>
+              </div>
+              <div class="stat-card-icon"><i class="fas fa-file-contract"></i></div>
+            </div>
+            
+            <div class="stat-card">
+              <div class="stat-card-left">
+                <h4>Lịch Hẹn Xem Xe</h4>
+                <div class="number" id="user-stat-appointments">0</div>
+              </div>
+              <div class="stat-card-icon"><i class="far fa-calendar-check"></i></div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-card-left">
+                <h4>Lịch Lái Thử</h4>
+                <div class="number" id="user-stat-testdrives">0</div>
+              </div>
+              <div class="stat-card-icon"><i class="fas fa-car-side"></i></div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-card-left">
+                <h4>Xe Yêu Thích</h4>
+                <div class="number" id="user-stat-wishlist">0</div>
+              </div>
+              <div class="stat-card-icon"><i class="fas fa-heart"></i></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 1. Profile Tab -->
+        <div class="dashboard-content-tab active" id="tab-profile">
+          <div class="dashboard-tab-header">
+            <h2>Thông Tin Cá Nhân</h2>
+          </div>
+          
+          <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 40px; align-items: start;">
+            <!-- Profile form -->
+            <div class="dashboard-form-container">
+              <form id="user-profile-form">
+                <div class="form-group">
+                  <label for="fullName">Họ và Tên *</label>
+                  <input type="text" id="fullName" class="form-control" required>
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="phone">Số điện thoại *</label>
+                    <input type="tel" id="phone" class="form-control" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="email">Địa chỉ Email *</label>
+                    <input type="email" id="email" class="form-control" required>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="address">Địa Chỉ Giao Nhận Xe / Thường Trú</label>
+                  <input type="text" id="address" class="form-control">
+                </div>
+                <button type="submit" class="btn-gold" style="margin-top: 15px;">Lưu Thay Đổi</button>
+              </form>
+            </div>
+
+            <!-- Password form -->
+            <div class="dashboard-form-container">
+              <h3 style="margin-bottom: 25px; font-family: var(--font-heading);">Đổi Mật Khẩu</h3>
+              <form id="user-password-form">
+                <div class="form-group">
+                  <label for="currentPassword">Mật Khẩu Hiện Tại *</label>
+                  <input type="password" id="currentPassword" class="form-control" required>
+                </div>
+                <div class="form-group">
+                  <label for="newPassword">Mật Khẩu Mới *</label>
+                  <input type="password" id="newPassword" class="form-control" required>
+                </div>
+                <div class="form-group">
+                  <label for="confirmNewPassword">Nhập Lại Mật Khẩu Mới *</label>
+                  <input type="password" id="confirmNewPassword" class="form-control" required>
+                </div>
+                <button type="submit" class="btn-outline" style="width: 100%; margin-top: 15px;">Đổi Mật Khẩu</button>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Wishlist Tab -->
+        <div class="dashboard-content-tab" id="tab-wishlist">
+          <div class="dashboard-tab-header">
+            <h2>Xe Đang Quan Tâm</h2>
+          </div>
+          <div class="cars-grid" id="wishlist-cars-grid">
+            <!-- Loaded dynamically from user-dashboard.js -->
+          </div>
+        </div>
+
+        <!-- 3. Appointments Tab -->
+        <div class="dashboard-content-tab" id="tab-appointments">
+          <div class="dashboard-tab-header">
+            <h2>Lịch Hẹn Xem Xe Tại Showroom</h2>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Người Hẹn</th>
+                  <th>Siêu Xe Quan Tâm</th>
+                  <th>Showroom</th>
+                  <th>Thời Gian Hẹn</th>
+                  <th>Nhân Viên Phụ Trách</th>
+                  <th>Trạng Thái</th>
+                </tr>
+              </thead>
+              <tbody id="appointments-table-body">
+                <!-- Loaded dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 4. Test Drives Tab -->
+        <div class="dashboard-content-tab" id="tab-test-drives">
+          <div class="dashboard-tab-header">
+            <h2>Yêu Cầu Đăng Ký Lái Thử</h2>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Siêu Xe Lái Thử</th>
+                  <th>Showroom Lái</th>
+                  <th>Thời Gian Lái Thử</th>
+                  <th>Kinh Nghiệm</th>
+                  <th>Nhân Viên Đồng Hành</th>
+                  <th>Trạng Thái</th>
+                </tr>
+              </thead>
+              <tbody id="testdrives-table-body">
+                <!-- Loaded dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 5. Deposits Tab -->
+        <div class="dashboard-content-tab" id="tab-deposits">
+          <div class="dashboard-tab-header">
+            <h2>Lịch Sử Đặt Cọc Giữ Xe</h2>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Mã Đặt Cọc</th>
+                  <th>Siêu Xe Giữ</th>
+                  <th>Số Tiền Đặt Cọc</th>
+                  <th>Hết Hạn Giữ Xe</th>
+                  <th>Trạng Thái Cọc</th>
+                  <th>Biên Lai Giao Dịch</th>
+                </tr>
+              </thead>
+              <tbody id="deposits-table-body">
+                <!-- Loaded dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 6. Orders Tab -->
+        <div class="dashboard-content-tab" id="tab-orders">
+          <div class="dashboard-tab-header">
+            <h2>Hợp Đồng Mua Bán Xe</h2>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Mã Hợp Đồng</th>
+                  <th>Siêu Xe</th>
+                  <th>Tổng Giá Trị</th>
+                  <th>Số Tiền Còn Lại</th>
+                  <th>Trạng Thái Chi Trả</th>
+                  <th>Trạng Thái Đơn</th>
+                </tr>
+              </thead>
+              <tbody id="orders-table-body">
+                <!-- Loaded dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="/public/js/toast.js"></script>
+  <script src="/public/js/main.js"></script>
+  <script src="/public/js/sidebar-user.js"></script>
+  <script src="/public/js/wishlist.js"></script>
+  <script src="/public/js/user-dashboard.js"></script>
+</body>
+</html>

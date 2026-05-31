@@ -1,0 +1,155 @@
+@media screen and (max-width: 1024px) {
+  .catalog-layout {
+    grid-template-columns: 1fr;
+  }
+  
+  .filter-sidebar {
+    position: relative;
+    top: 0;
+    width: 100%;
+    margin-bottom: 30px;
+  }
+  
+  .dashboard-layout {
+    grid-template-columns: 1fr;
+  }
+  
+  .dashboard-sidebar {
+    position: relative;
+    top: 0;
+    width: 100%;
+    height: auto;
+    border-right: none;
+    border-bottom: var(--glass-border);
+    padding: 30px 24px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .dashboard-user-info {
+    border-bottom: none;
+    padding-bottom: 0;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    text-align: left;
+  }
+  
+  .dashboard-user-info .avatar {
+    margin: 0;
+    width: 48px;
+    height: 48px;
+    font-size: 1.3rem;
+  }
+  
+  .dashboard-menu {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+  
+  .dashboard-menu-item {
+    padding: 8px 15px;
+    font-size: 0.8rem;
+  }
+  
+  .dashboard-logout-btn {
+    margin-top: 0;
+  }
+  
+  .dashboard-content {
+    padding: 30px 20px;
+  }
+
+  .car-detail-main {
+    grid-template-columns: 1fr;
+  }
+  
+  .car-cta-box {
+    position: relative;
+    top: 0;
+    width: 100%;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .nav-menu {
+    display: none; /* Burger menu toggle can be implemented via JS */
+  }
+
+  .footer-container {
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+  }
+  
+  .hero-title {
+    font-size: 2.8rem;
+  }
+  
+  .compare-selector-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  
+  .car-gallery-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .gallery-thumbs {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: auto;
+    height: 120px;
+  }
+  
+  .gallery-thumb-item {
+    padding-top: 30%;
+  }
+
+  .compare-table td:first-child {
+    width: 120px;
+    font-size: 0.7rem;
+    padding: 10px;
+  }
+  
+  .compare-table th, 
+  .compare-table td {
+    padding: 10px;
+    font-size: 0.8rem;
+  }
+
+  .compare-car-thumb {
+    width: 80px;
+    height: 50px;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .footer-container {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+  
+  .footer-bottom {
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
+  }
+  
+  .hero-title {
+    font-size: 2.2rem;
+  }
+  
+  .section-header h2 {
+    font-size: 1.8rem;
+  }
+
+  .auth-container {
+    padding: 30px 20px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+}

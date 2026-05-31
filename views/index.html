@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SuperCar Luxury — Thế Giới Siêu Xe Đỉnh Cao</title>
+  <meta name="description" content="Showroom cung cấp các mẫu siêu xe, xe sang, hypercar chính hãng hàng đầu Việt Nam. Minh bạch pháp lý, dịch vụ lái thử chuyên nghiệp.">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/public/css/style.css">
+  <link rel="stylesheet" href="/public/css/cars.css">
+  <link rel="stylesheet" href="/public/css/responsive.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="nav-container">
+      <a href="/" class="logo">
+        <span class="logo-text">SUPERCAR<span>LUXURY</span></span>
+      </a>
+      <nav>
+        <ul class="nav-menu">
+          <li class="nav-item active"><a href="/">Trang Chủ</a></li>
+          <li class="nav-item"><a href="/views/cars.html">Bộ Sưu Tập Xe</a></li>
+          <li class="nav-item"><a href="/views/compare.html">So Sánh</a></li>
+          <li class="nav-item"><a href="/views/finance.html">Trả Góp</a></li>
+          <li class="nav-item"><a href="/views/consignment.html">Ký Gửi</a></li>
+          <li class="nav-item"><a href="/views/contact.html">Liên Hệ</a></li>
+        </ul>
+      </nav>
+      <div class="nav-buttons" id="nav-auth-buttons">
+        <!-- Loaded dynamically from main.js -->
+        <a href="/views/login.html" class="btn-outline" style="padding: 10px 22px; font-size: 0.75rem;">Đăng Nhập</a>
+        <a href="/views/register.html" class="btn-gold" style="padding: 10px 22px; font-size: 0.75rem;">Đăng Ký</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero-sec" id="homepage-hero" style="background-image: url('https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?auto=format&fit=crop&w=1920&q=80');">
+    <div class="hero-content">
+      <span class="hero-subtitle" id="hero-subtitle">SuperCar Luxury</span>
+      <h1 class="hero-title" id="hero-title">Sở hữu siêu xe mơ ước của bạn</h1>
+      <p class="hero-desc" id="hero-desc">Hệ thống showroom phân phối siêu xe và xe thể thao cao cấp chính hãng hàng đầu tại Việt Nam. Cam kết pháp lý minh bạch và trải nghiệm dịch vụ đỉnh cao.</p>
+      <a href="/views/cars.html" class="btn-gold" id="hero-btn">Khám Phá Showroom</a>
+    </div>
+  </section>
+
+  <!-- Featured Brands -->
+  <section class="section-padding" style="background: var(--bg-primary);">
+    <div class="container">
+      <div class="section-header">
+        <span class="subtitle">Thương hiệu danh tiếng</span>
+        <h2>Đối Tác Chiến Lược</h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 30px; justify-items: center; align-items: center;" id="brands-container">
+        <!-- Loaded dynamically -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Cars -->
+  <section class="section-padding" style="background: var(--bg-secondary); border-top: var(--glass-border); border-bottom: var(--glass-border);">
+    <div class="container">
+      <div class="section-header">
+        <span class="subtitle">Kiệt Tác Cơ Khí</span>
+        <h2>Siêu Xe Nổi Bật</h2>
+      </div>
+      <div class="cars-grid" id="featured-cars-grid">
+        <!-- Loaded dynamically -->
+      </div>
+      <div style="text-align: center; margin-top: 50px;">
+        <a href="/views/cars.html" class="btn-outline">Xem Tất Cả Xe</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Collections -->
+  <section class="section-padding" style="background: var(--bg-primary);">
+    <div class="container">
+      <div class="section-header">
+        <span class="subtitle">Độc Quyền & Phong Cách</span>
+        <h2>Bộ Sưu Tập Nổi Bật</h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px;" id="collections-container">
+        <!-- Loaded dynamically -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Showroom Services & Testimonials -->
+  <section class="section-padding" style="background: var(--bg-secondary); border-top: var(--glass-border);">
+    <div class="container" style="display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;" id="about-section-container">
+      <div>
+        <span class="subtitle" style="color: var(--color-gold); font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 2px;">Trải Nghiệm Thượng Lưu</span>
+        <h2 style="font-size: 2.5rem; margin: 15px 0 25px;">Uy Tín Kiến Tạo Niềm Tin</h2>
+        <p style="color: var(--color-silver); margin-bottom: 20px;">Mỗi chiếc siêu xe tại showroom của chúng tôi đều trải qua quy trình kiểm định nghiêm ngặt 150 bước, đảm bảo chất lượng hoàn hảo nhất khi bàn giao cho gia chủ.</p>
+        <p style="color: var(--color-silver); margin-bottom: 30px;">Hỗ trợ lái thử tại gia, làm thủ tục hải quan bấm biển trọn gói. Đội ngũ chuyên gia kỹ thuật phục vụ 24/7 toàn quốc.</p>
+        <div style="display: flex; gap: 30px;">
+          <div>
+            <h4 style="font-size: 2rem; color: var(--color-gold); font-weight: 700;">100%</h4>
+            <p style="font-size: 0.8rem; text-transform: uppercase; color: var(--color-silver);">Pháp lý minh bạch</p>
+          </div>
+          <div>
+            <h4 style="font-size: 2rem; color: var(--color-gold); font-weight: 700;">150+</h4>
+            <p style="font-size: 0.8rem; text-transform: uppercase; color: var(--color-silver);">Điểm kiểm định kĩ thuật</p>
+          </div>
+        </div>
+      </div>
+      <div style="border-radius: 4px; overflow: hidden; border: var(--glass-border);">
+        <img src="https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=800&q=80" alt="Showroom view" style="width: 100%; display: block;">
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-container">
+      <div class="footer-logo-desc">
+        <span class="logo-text">SUPERCAR<span>LUXURY</span></span>
+        <p>Hệ thống showroom chuyên phân phối các mẫu siêu xe, xe sang, hypercar chính hãng hàng đầu tại Việt Nam.</p>
+      </div>
+      <div class="footer-section">
+        <h3>Showroom</h3>
+        <ul class="footer-links">
+          <li><a href="/views/cars.html">Mua Xe</a></li>
+          <li><a href="/views/consignment.html">Ký Gửi Siêu Xe</a></li>
+          <li><a href="/views/finance.html">Trả Góp Tài Chính</a></li>
+          <li><a href="/views/contact.html">Liên Hệ Hỗ Trợ</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>Điều Khoản</h3>
+        <ul class="footer-links">
+          <li><a href="/views/policy.html">Chính Sách Bảo Mật</a></li>
+          <li><a href="/views/policy.html">Điều Khoản Đặt Cọc</a></li>
+          <li><a href="/views/faq.html">Câu Hỏi Thường Gặp</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>Thông Tin Liên Hệ</h3>
+        <ul class="footer-contact-info">
+          <li><i class="fas fa-map-marker-alt"></i> 88 Lê Văn Lương, Thanh Xuân, Hà Nội</li>
+          <li><i class="fas fa-phone"></i> Hotline: 1900 8888</li>
+          <li><i class="fas fa-envelope"></i> Email: info@supercarluxury.vn</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 SuperCar Luxury. All Rights Reserved.</p>
+      <div style="display: flex; gap: 20px;">
+        <a href="#" style="color: var(--color-silver);"><i class="fab fa-facebook-f"></i></a>
+        <a href="#" style="color: var(--color-silver);"><i class="fab fa-instagram"></i></a>
+        <a href="#" style="color: var(--color-silver);"><i class="fab fa-youtube"></i></a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/public/js/toast.js"></script>
+  <script src="/public/js/main.js"></script>
+  <script>
+    // Load setting config and cars/brands on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      loadHomepageConfig();
+      loadBrands();
+      loadFeaturedCars();
+      loadCollections();
+    });
+
+    async function loadHomepageConfig() {
+      try {
+        const res = await fetch('/api/site-settings');
+        const data = await res.json();
+        if (data.success && data.data) {
+          const config = data.data;
+          
+          // Apply banner config
+          if (config.hero && config.hero.isVisible) {
+            document.getElementById('hero-title').textContent = config.hero.title;
+            document.getElementById('hero-subtitle').textContent = config.hero.subtitle;
+            document.getElementById('hero-desc').textContent = config.hero.description;
+            const heroSec = document.getElementById('homepage-hero');
+            if (config.hero.image) {
+              heroSec.style.backgroundImage = `url('${config.hero.image}')`;
+            }
+            const heroBtn = document.getElementById('hero-btn');
+            heroBtn.textContent = config.hero.buttonText;
+            heroBtn.href = config.hero.buttonLink;
+          }
+        }
+      } catch (err) {
+        console.error('Failed to load settings config:', err.message);
+      }
+    }
+
+    async function loadBrands() {
+      try {
+        const res = await fetch('/api/brands');
+        const data = await res.json();
+        if (data.success) {
+          const container = document.getElementById('brands-container');
+          let html = '';
+          data.data.slice(0, 8).forEach(b => {
+            html += `
+              <a href="/views/cars.html?brand=${b.slug}" style="display: flex; flex-direction: column; align-items: center; gap: 10px; opacity: 0.6; transition: var(--transition-smooth);">
+                <img src="${b.logo}" alt="${b.name}" style="height: 50px; width: 70px; object-fit: contain; filter: grayscale(1) invert(1);">
+                <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: var(--color-white);">${b.name}</span>
+              </a>
+            `;
+          });
+          container.innerHTML = html;
+        }
+      } catch (e) {
+        console.error('Failed to load brands:', e.message);
+      }
+    }
+
+    async function loadFeaturedCars() {
+      try {
+        let cars = [];
+        // First check site settings
+        const settingsRes = await fetch('/api/site-settings');
+        const settingsData = await settingsRes.json();
+        if (settingsData.success && settingsData.data && settingsData.data.featuredCars && settingsData.data.featuredCars.length > 0) {
+          cars = settingsData.data.featuredCars;
+        } else {
+          // Fallback to latest cars
+          const res = await fetch('/api/cars?limit=8&sort=newest');
+          const data = await res.json();
+          if (data.success) {
+            cars = data.data;
+          }
+        }
+
+        const container = document.getElementById('featured-cars-grid');
+        let html = '';
+        cars.slice(0, 8).forEach(car => {
+          const carImg = car.images[0] || 'https://images.unsplash.com/photo-1544829099-b9a0c07fad1a?auto=format&fit=crop&w=400&q=80';
+          let statusBadge = '';
+          if (car.status === 'reserved') {
+            statusBadge = '<span class="car-badge reserved">Đã Đặt Cọc</span>';
+          } else if (car.status === 'sold') {
+            statusBadge = '<span class="car-badge sold">Đã Bán</span>';
+          } else if (car.status === 'coming_soon') {
+            statusBadge = '<span class="car-badge">Sắp Về</span>';
+          } else if (car.status === 'consignment') {
+            statusBadge = '<span class="car-badge">Ký Gửi</span>';
+          }
+
+          html += `
+            <a href="/views/car-detail.html?slug=${car.slug}" class="car-card" style="display: block; text-decoration: none; color: inherit;">
+              <div class="car-card-img">
+                <img src="${carImg}" alt="${car.name}" loading="lazy">
+                ${statusBadge}
+              </div>
+              <div class="car-card-body">
+                <div class="car-card-brand">${car.brand ? car.brand.name : 'Supercar'}</div>
+                <h3 class="car-card-title">${car.name}</h3>
+                <div class="car-card-specs" style="padding: 10px 0; margin-bottom: 15px;">
+                  <div class="car-card-spec-item"><i class="fas fa-calendar-alt"></i> ${car.year}</div>
+                  <div class="car-card-spec-item"><i class="fas fa-tachometer-alt"></i> ${car.mileage ? car.mileage.toLocaleString() : 0} km</div>
+                </div>
+                <div class="car-card-footer">
+                  <div class="car-card-price">${formatCurrencyVND(car.price)}</div>
+                </div>
+              </div>
+            </a>
+          `;
+        });
+        container.innerHTML = html;
+      } catch (err) {
+        console.error('Failed to load featured cars:', err.message);
+      }
+    }
+
+    async function loadCollections() {
+      try {
+        const res = await fetch('/api/collections');
+        const data = await res.json();
+        if (data.success) {
+          const container = document.getElementById('collections-container');
+          let html = '';
+          data.data.slice(0, 3).forEach(c => {
+            html += `
+              <a href="/views/cars.html?collection=${c.slug}" class="collection-card" style="display: block; position: relative; border-radius: 4px; overflow: hidden; border: var(--glass-border); height: 260px; transition: var(--transition-smooth); cursor: pointer;">
+                <div class="collection-overlay" style="position: absolute; top:0; left:0; width:100%; height:100%; background: linear-gradient(to top, rgba(5,5,5,0.9) 0%, rgba(5,5,5,0.2) 100%); z-index: 1; transition: background 0.3s;"></div>
+                <img src="${c.image || 'https://images.unsplash.com/photo-1525609004556-c46c7d6cf0a3?auto=format&fit=crop&w=800&q=80'}" alt="${c.name}" style="position: absolute; top:0; left:0; width:100%; height:100%; object-fit: cover; transition: transform 0.3s ease;">
+                <div style="position: absolute; bottom: 30px; left: 30px; z-index: 2;">
+                  <h3 style="font-size: 1.4rem; margin-bottom: 5px; color: var(--color-white);">${c.name}</h3>
+                </div>
+              </a>
+            `;
+          });
+          container.innerHTML = html;
+        }
+      } catch (e) {
+        console.error('Failed to load collections:', e.message);
+      }
+    }
+  </script>
+</body>
+</html>

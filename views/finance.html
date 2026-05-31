@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tư Vấn Trả Góp & Tính Toán Tài Chính — SuperCar Luxury</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/public/css/style.css">
+  <link rel="stylesheet" href="/public/css/auth.css">
+  <link rel="stylesheet" href="/public/css/responsive.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="nav-container">
+      <a href="/" class="logo">
+        <span class="logo-text">SUPERCAR<span>LUXURY</span></span>
+      </a>
+      <nav>
+        <ul class="nav-menu">
+          <li class="nav-item"><a href="/">Trang Chủ</a></li>
+          <li class="nav-item"><a href="/views/cars.html">Bộ Sưu Tập Xe</a></li>
+          <li class="nav-item"><a href="/views/compare.html">So Sánh</a></li>
+          <li class="nav-item active"><a href="/views/finance.html">Trả Góp</a></li>
+          <li class="nav-item"><a href="/views/consignment.html">Ký Gửi</a></li>
+          <li class="nav-item"><a href="/views/contact.html">Liên Hệ</a></li>
+        </ul>
+      </nav>
+      <div class="nav-buttons" id="nav-auth-buttons">
+        <!-- Loaded dynamically -->
+      </div>
+    </div>
+  </header>
+
+  <!-- Content -->
+  <main class="container section-padding" style="padding-top: 140px;">
+    <div class="section-header">
+      <span class="subtitle">Giải Pháp Tài Chính</span>
+      <h2>Máy Tính Tính Toán Trả Góp Trực Tuyến</h2>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 50px; align-items: start;">
+      <!-- Interactive Calculator Widget -->
+      <div class="auth-container" style="max-width: 100%; padding: 40px;">
+        <h3 style="margin-bottom: 25px; font-family: var(--font-heading); color: var(--color-gold);"><i class="fas fa-calculator"></i> Nhập Thông Tin Khoản Vay</h3>
+        
+        <div class="form-group">
+          <label for="calc-car">Chọn Siêu Xe Vay Mua *</label>
+          <select id="calc-car" class="form-control" onchange="updateCalculations()">
+            <!-- Loaded dynamically -->
+          </select>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="calc-price-display">Giá Xe Niêm Yết (VND)</label>
+            <input type="text" id="calc-price-display" class="form-control" readonly value="0 ₫">
+          </div>
+          <div class="form-group">
+            <label for="calc-downpayment">Số Tiền Trả Trước (VND) *</label>
+            <input type="number" id="calc-downpayment" class="form-control" value="5000000000" oninput="updateCalculations()">
+            <small style="color: var(--color-silver);">Tối thiểu 20% giá trị xe.</small>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="calc-term">Thời Hạn Vay (Tháng) *</label>
+            <select id="calc-term" class="form-control" onchange="updateCalculations()">
+              <option value="12">12 tháng (1 năm)</option>
+              <option value="24">24 tháng (2 năm)</option>
+              <option value="36" selected>36 tháng (3 năm)</option>
+              <option value="48">48 tháng (4 năm)</option>
+              <option value="60">60 tháng (5 năm)</option>
+              <option value="72">72 tháng (6 năm)</option>
+              <option value="84">84 tháng (7 năm)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="calc-rate">Lãi Suất Vay Tham Khảo (% / Năm)</label>
+            <input type="number" id="calc-rate" class="form-control" value="8" step="0.1" oninput="updateCalculations()">
+          </div>
+        </div>
+
+        <!-- Calculator Output -->
+        <div style="background: rgba(255,255,255,0.02); border: var(--glass-border); padding: 25px; border-radius: 4px; margin-top: 30px;">
+          <h4 style="margin-bottom: 15px; color: var(--color-white); text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">Kết Quả Ước Tính</h4>
+          <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.03);">
+            <span style="color: var(--color-silver);">Số tiền ngân hàng cho vay:</span>
+            <strong style="color: var(--color-white);" id="res-loan-amount">0 ₫</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; padding: 15px 0 5px;">
+            <span style="color: var(--color-silver);">Trả góp định kỳ dự kiến hàng tháng:</span>
+            <strong style="color: var(--color-gold); font-size: 1.4rem;" id="res-monthly-payment">0 ₫</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- Consultation Form -->
+      <div class="auth-container" style="max-width: 100%; padding: 40px;">
+        <h3 style="margin-bottom: 25px; font-family: var(--font-heading); color: var(--color-gold);"><i class="fas fa-paper-plane"></i> Yêu Cầu Gói Vay Chi Tiết</h3>
+        <form id="finance-form">
+          <div class="form-group">
+            <label for="fullName">Họ và Tên Đăng Ký Gói Vay *</label>
+            <input type="text" id="fullName" class="form-control" placeholder="Nhập tên đăng ký..." required>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="phone">Số điện thoại liên hệ *</label>
+              <input type="tel" id="phone" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label for="email">Địa chỉ Email *</label>
+              <input type="email" id="email" class="form-control" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="monthlyIncome">Thu Nhập Định Kỳ Hàng Tháng (VND) *</label>
+            <input type="number" id="monthlyIncome" class="form-control" placeholder="Ví dụ: 100000000" required>
+          </div>
+
+          <div class="form-group">
+            <label for="preferredBank">Ngân Hàng Liên Kết Ưu Tiên</label>
+            <select id="preferredBank" class="form-control">
+              <option value="Techcombank" selected>Techcombank - Ngân hàng Kỹ thương Việt Nam</option>
+              <option value="Vietcombank">Vietcombank - Ngân hàng Ngoại thương Việt Nam</option>
+              <option value="VIB">VIB - Ngân hàng Quốc tế</option>
+              <option value="TPBank">TPBank - Ngân hàng Tiên Phong</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="note">Thông tin bổ sung / Kế hoạch tài chính</label>
+            <textarea id="note" class="form-control" rows="2" placeholder="Ghi chú thêm về gói vay mua xe..."></textarea>
+          </div>
+
+          <button type="submit" class="btn-gold auth-btn">Gửi Đơn Thẩm Định Tài Chính</button>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-container">
+      <div class="footer-logo-desc">
+        <span class="logo-text">SUPERCAR<span>LUXURY</span></span>
+        <p>Hệ thống showroom chuyên phân phối các mẫu siêu xe, xe sang, hypercar chính hãng hàng đầu tại Việt Nam.</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 SuperCar Luxury. All Rights Reserved.</p>
+    </div>
+  </footer>
+
+  <script src="/public/js/toast.js"></script>
+  <script src="/public/js/main.js"></script>
+  <script>
+    let carsList = [];
+
+    document.addEventListener('DOMContentLoaded', () => {
+      loadCarsDropdown();
+
+      const form = document.getElementById('finance-form');
+      if (form) {
+        form.addEventListener('submit', handleFinanceSubmit);
+      }
+    });
+
+    async function loadCarsDropdown() {
+      try {
+        const res = await fetch('/api/cars?status=available');
+        const data = await res.json();
+        if (data.success) {
+          carsList = data.data;
+          const select = document.getElementById('calc-car');
+          let options = '';
+          carsList.forEach((car, index) => {
+            options += `<option value="${car._id}" ${index === 0 ? 'selected' : ''}>${car.name} (${formatCurrencyVND(car.price)})</option>`;
+          });
+          select.innerHTML = options;
+          
+          // Trigger first calc
+          updateCalculations();
+        }
+      } catch (err) {
+        console.error('Failed to load cars list:', err.message);
+      }
+    }
+
+    // Interactive Monthly Calculator Logic matching Vietnamese requirements
+    window.updateCalculations = function() {
+      const carSelect = document.getElementById('calc-car');
+      if (!carSelect.value) return;
+
+      const car = carsList.find(c => c._id === carSelect.value);
+      if (!car) return;
+
+      document.getElementById('calc-price-display').value = formatCurrencyVND(car.price);
+
+      const price = car.price;
+      const downPaymentInput = document.getElementById('calc-downpayment');
+      let downPayment = Number(downPaymentInput.value);
+
+      // Validate down payment is at least 20%
+      const minDown = price * 0.2;
+      if (downPayment < minDown) {
+        downPayment = minDown;
+        downPaymentInput.value = minDown;
+        showToast('Số tiền trả trước tối thiểu là 20% giá trị xe!', 'warning');
+      }
+
+      if (downPayment > price) {
+        downPayment = price * 0.5;
+        downPaymentInput.value = downPayment;
+        showToast('Số tiền trả trước không thể lớn hơn giá xe!', 'error');
+      }
+
+      const term = Number(document.getElementById('calc-term').value);
+      const annualRate = Number(document.getElementById('calc-rate').value) / 100;
+
+      const loanAmount = price - downPayment;
+      
+      // Calculate monthly payment: loanAmount / term + (loanAmount * annualRate * (term/12)) / term
+      const totalInterest = loanAmount * annualRate * (term / 12);
+      const monthlyPayment = Math.round((loanAmount + totalInterest) / term);
+
+      document.getElementById('res-loan-amount').textContent = formatCurrencyVND(loanAmount);
+      document.getElementById('res-monthly-payment').textContent = formatCurrencyVND(monthlyPayment);
+    };
+
+    async function handleFinanceSubmit(e) {
+      e.preventDefault();
+
+      const carId = document.getElementById('calc-car').value;
+      const downPayment = Number(document.getElementById('calc-downpayment').value);
+      const loanTerm = Number(document.getElementById('calc-term').value);
+      
+      const fullName = document.getElementById('fullName').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const monthlyIncome = document.getElementById('monthlyIncome').value;
+      const preferredBank = document.getElementById('preferredBank').value;
+      const note = document.getElementById('note').value.trim();
+
+      if (!fullName || !phone || !email || !monthlyIncome) {
+        showToast('Vui lòng điền đầy đủ các thông tin cá nhân bắt buộc!', 'error');
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/finance-requests', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            carId,
+            fullName,
+            phone,
+            email,
+            downPayment,
+            loanTerm,
+            monthlyIncome: Number(monthlyIncome),
+            preferredBank,
+            note
+          })
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          showToast('Gửi yêu cầu trả góp thành công! Nhân viên tín dụng showroom sẽ chủ động liên hệ hỗ trợ hồ sơ.', 'success');
+          document.getElementById('finance-form').reset();
+        } else {
+          showToast(data.message || 'Gửi yêu cầu thất bại. Kiểm tra lại thông tin đăng nhập.', 'error');
+        }
+      } catch (err) {
+        showToast('Lỗi kết nối máy chủ.', 'error');
+      }
+    }
+  </script>
+</body>
+</html>

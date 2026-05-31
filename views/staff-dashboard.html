@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bảng Điều Khiển Nhân Viên — SuperCar Luxury</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/public/css/style.css">
+  <link rel="stylesheet" href="/public/css/auth.css">
+  <link rel="stylesheet" href="/public/css/cars.css">
+  <link rel="stylesheet" href="/public/css/dashboard.css">
+  <link rel="stylesheet" href="/public/css/responsive.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="nav-container">
+      <a href="/" class="logo">
+        <span class="logo-text">SUPERCAR<span>LUXURY</span></span>
+      </a>
+      <div class="nav-buttons">
+        <a href="/" class="btn-dark" style="padding: 10px 20px; font-size: 0.75rem;"><i class="fas fa-home"></i> Trang Chủ</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Dashboard Container -->
+  <div class="dashboard-section">
+    <div class="dashboard-layout">
+      <!-- Sidebar Navigation -->
+      <div id="sidebar"></div>
+
+      <!-- Main Dashboard Content Panel -->
+      <main class="dashboard-content">
+        <!-- 1. Overview Tab -->
+        <div class="dashboard-content-tab active" id="tab-overview">
+          <div class="dashboard-tab-header">
+            <h2>Tổng Quan Hoạt Động Showroom</h2>
+          </div>
+          
+          <div class="stats-cards-grid">
+            <div class="stat-card">
+              <div class="stat-card-left">
+                <h4>Lịch Hẹn Hôm Nay</h4>
+                <div class="number" id="stat-apt-today">0</div>
+              </div>
+              <div class="stat-card-icon"><i class="far fa-calendar-check"></i></div>
+            </div>
+            
+            <div class="stat-card">
+              <div class="stat-card-left">
+                <h4>Đặt Cọc Chờ Duyệt</h4>
+                <div class="number" id="stat-dep-pending">0</div>
+              </div>
+              <div class="stat-card-icon"><i class="fas fa-receipt"></i></div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-card-left">
+                <h4>Đơn Mua Xe Đang Xử Lý</h4>
+                <div class="number" id="stat-orders-active">0</div>
+              </div>
+              <div class="stat-card-icon"><i class="fas fa-file-invoice-dollar"></i></div>
+            </div>
+          </div>
+
+          <h3 style="margin: 40px 0 20px; font-family: var(--font-heading); color: var(--color-gold);">Thống Kê Doanh Thu Hoạt Động</h3>
+          
+          <!-- Date Filter Controls -->
+          <div style="background: var(--bg-secondary); border: var(--glass-border); padding: 20px; border-radius: 4px; margin-bottom: 30px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 20px;">
+            <div style="display: flex; align-items: center; gap: 15px;">
+              <div style="display: flex; flex-direction: column; gap: 5px;">
+                <label style="font-size: 0.75rem; color: var(--color-silver);">Từ ngày</label>
+                <input type="date" id="stats-start-date" class="form-control" style="padding: 8px 12px; background: #222; border: 1px solid #444; color: #fff; border-radius: 4px; width: 150px;">
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 5px;">
+                <label style="font-size: 0.75rem; color: var(--color-silver);">Đến ngày</label>
+                <input type="date" id="stats-end-date" class="form-control" style="padding: 8px 12px; background: #222; border: 1px solid #444; color: #fff; border-radius: 4px; width: 150px;">
+              </div>
+              <button type="button" id="btn-stats-apply" class="btn-gold" style="padding: 8px 20px; font-size: 0.8rem; margin-top: auto; cursor: pointer; height: 38px;">Lọc</button>
+            </div>
+            
+            <div style="display: flex; gap: 10px;">
+              <button type="button" class="btn-outline quick-filter-btn" data-days="7" style="padding: 8px 15px; font-size: 0.75rem; cursor: pointer;">7 ngày qua</button>
+              <button type="button" class="btn-outline quick-filter-btn" data-days="month" style="padding: 8px 15px; font-size: 0.75rem; cursor: pointer;">Tháng này</button>
+              <button type="button" class="btn-outline quick-filter-btn" data-days="year" style="padding: 8px 15px; font-size: 0.75rem; cursor: pointer;">Năm nay</button>
+            </div>
+          </div>
+
+          <!-- Chart Area -->
+          <div style="background: var(--bg-secondary); border: var(--glass-border); padding: 25px; border-radius: 4px; margin-bottom: 30px;">
+            <h4 style="margin-bottom: 20px; font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; color: var(--color-gold);">Biểu đồ doanh thu theo ngày</h4>
+            <div style="position: relative; height: 350px; width: 100%;">
+              <canvas id="revenue-chart-canvas"></canvas>
+            </div>
+          </div>
+
+          <!-- Sold Cars List -->
+          <div style="background: var(--bg-secondary); border: var(--glass-border); padding: 25px; border-radius: 4px;">
+            <h4 style="margin-bottom: 20px; font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; color: var(--color-gold);">Danh sách xe đã bán trong kỳ</h4>
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Tên Siêu Xe</th>
+                    <th>Hãng Xe</th>
+                    <th>Giá Bán</th>
+                    <th>Ngày Hoàn Thành</th>
+                  </tr>
+                </thead>
+                <tbody id="sold-cars-table-body">
+                  <!-- Loaded dynamically -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Contacts Tab -->
+        <div class="dashboard-content-tab" id="tab-contacts">
+          <div class="dashboard-tab-header">
+            <h2>Yêu Cầu Liên Hệ & Tư Vấn Khách Hàng</h2>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Khách Hàng</th>
+                  <th>Chủ Đề</th>
+                  <th>Nội Dung Chi Tiết</th>
+                  <th>Xe Quan Tâm</th>
+                  <th>Trạng Thái</th>
+                  <th>Ghi Chú Phản Hồi</th>
+                  <th>Thao Tác</th>
+                </tr>
+              </thead>
+              <tbody id="staff-contacts-table-body">
+                <!-- Loaded dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 3. Appointments Tab -->
+        <div class="dashboard-content-tab" id="tab-appointments">
+          <div class="dashboard-tab-header">
+            <h2>Xem và Xác Nhận Lịch Hẹn Showroom</h2>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Khách Hàng</th>
+                  <th>Siêu Xe Muốn Xem</th>
+                  <th>Showroom Đăng Ký</th>
+                  <th>Thời Gian Hẹn</th>
+                  <th>Trạng Thái</th>
+                  <th>Ghi Chú Tư Vấn</th>
+                  <th>Cập Nhật Lịch</th>
+                </tr>
+              </thead>
+              <tbody id="staff-appointments-table-body">
+                <!-- Loaded dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 4. Test Drives Tab -->
+        <div class="dashboard-content-tab" id="tab-test-drives">
+          <div class="dashboard-tab-header">
+            <h2>Kiểm Duyệt Lịch Hẹn Lái Thử Siêu Xe</h2>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Khách Hàng</th>
+                  <th>Siêu Xe Lái Thử</th>
+                  <th>Showroom Hẹn</th>
+                  <th>Thời Gian</th>
+                  <th>Bằng Lái (GPLX)</th>
+                  <th>Trạng Thái</th>
+                  <th>Ghi Chú Điều Kiện</th>
+                  <th>Cập Nhật</th>
+                </tr>
+              </thead>
+              <tbody id="staff-testdrives-table-body">
+                <!-- Loaded dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 5. Deposits Tab -->
+        <div class="dashboard-content-tab" id="tab-deposits">
+          <div class="dashboard-tab-header">
+            <h2>Kiểm Duyệt Giao Dịch Đặt Cọc Giữ Xe</h2>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Mã Cọc</th>
+                  <th>Khách Hàng</th>
+                  <th>Siêu Xe Giữ</th>
+                  <th>Số Tiền Cọc</th>
+                  <th>Ảnh Chuyển Khoản</th>
+                  <th>Trạng Thái</th>
+                  <th>Ghi Chú Ngân Hàng</th>
+                  <th>Thao Tác Duyệt</th>
+                </tr>
+              </thead>
+              <tbody id="staff-deposits-table-body">
+                <!-- Loaded dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 6. Orders Tab -->
+        <div class="dashboard-content-tab" id="tab-orders">
+          <div class="dashboard-tab-header">
+            <h2>Theo Dõi & Xử Lý Đơn Hàng Mua Siêu Xe</h2>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Mã Hợp Đồng</th>
+                  <th>Khách Hàng</th>
+                  <th>Siêu Xe Mua</th>
+                  <th>Tổng Giá Trị</th>
+                  <th>Còn Lại Phải Đóng</th>
+                  <th>Trạng Thái Tiền</th>
+                  <th>Trạng Thái Đơn</th>
+                  <th>Xử Lý Hợp Đồng</th>
+                </tr>
+              </thead>
+              <tbody id="staff-orders-table-body">
+                <!-- Loaded dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 7. Manual Order Tab -->
+        <div class="dashboard-content-tab" id="tab-manual-order">
+          <div class="dashboard-tab-header">
+            <h2>Lập Hợp Đồng Mua Xe Thủ Công</h2>
+          </div>
+          
+          <div class="dashboard-form-container" style="max-width: 900px;">
+            <form id="manual-order-form">
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="manual-carId">Siêu Xe Cần Giao Dịch *</label>
+                  <select id="manual-carId" class="form-control" required>
+                    <!-- Loaded dynamically -->
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="manual-userId">Tài Khoản Khách Hàng (Hệ Thống) *</label>
+                  <select id="manual-userId" class="form-control" required>
+                    <!-- Loaded dynamically -->
+                  </select>
+                </div>
+              </div>
+
+              <h4 style="margin: 20px 0 15px; font-family: var(--font-heading); color: var(--color-gold);">Thông Tin Đăng Ký Pháp Lý</h4>
+
+              <div class="form-group">
+                <label for="manual-fullName">Họ và Tên Người Đứng Tên Hợp Đồng *</label>
+                <input type="text" id="manual-fullName" class="form-control" required>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="manual-phone">Số Điện thoại Liên Hệ *</label>
+                  <input type="tel" id="manual-phone" class="form-control" required>
+                </div>
+                <div class="form-group">
+                  <label for="manual-email">Địa chỉ Email Người Mua *</label>
+                  <input type="email" id="manual-email" class="form-control" required>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="manual-address">Địa Chỉ Thường Trú Ghi Trên Hợp Đồng *</label>
+                <input type="text" id="manual-address" class="form-control" required>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="manual-paymentMethod">Hình thức Thanh toán *</label>
+                  <select id="manual-paymentMethod" class="form-control" required>
+                    <option value="bank_transfer" selected>Chuyển khoản showroom</option>
+                    <option value="cash">Tiền mặt tại quầy</option>
+                    <option value="installment">Trả góp ngân hàng</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="manual-discount">Chiết khấu / Giảm Giá Trực Tiếp (VND)</label>
+                  <input type="number" id="manual-discount" class="form-control" value="0" min="0">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="manual-note">Ghi Chú Thêm</label>
+                <textarea id="manual-note" class="form-control" rows="2"></textarea>
+              </div>
+
+              <button type="submit" class="btn-gold" style="margin-top: 15px; width: 100%;">Tạo Đơn Hàng Mua Xe</button>
+            </form>
+          </div>
+        </div>
+
+        <!-- 8. Chat CSKH Tab -->
+        <div class="dashboard-content-tab" id="tab-chat">
+          <div class="dashboard-tab-header">
+            <h2>Kênh Chăm Sóc Khách Hàng (Live Chat)</h2>
+          </div>
+          <div style="background: var(--bg-secondary); border: var(--glass-border); padding: 30px; border-radius: 4px; text-align: center;">
+            <i class="fas fa-comments" style="font-size: 3rem; color: var(--color-gold); margin-bottom: 20px;"></i>
+            <h3 style="margin-bottom: 10px; color: #fff;">Hệ Thống Chat CSKH</h3>
+            <p style="color: var(--color-silver); font-size: 0.9rem; max-width: 500px; margin: 0 auto 20px;">Hệ thống kênh Chat CSKH trực tuyến thời gian thực hiện đang được đồng bộ và nâng cấp. Nhân viên vui lòng kiểm tra hộp thư email hoặc liên hệ Hotline để hỗ trợ gấp khách hàng.</p>
+            <div style="display: flex; justify-content: center; gap: 15px;">
+              <a href="mailto:support@supercarluxury.vn" class="btn-gold" style="padding: 10px 20px; font-size: 0.75rem;"><i class="fas fa-envelope"></i> Gửi Mail Hỗ Trợ</a>
+              <a href="/" class="btn-dark" style="padding: 10px 20px; font-size: 0.75rem;"><i class="fas fa-phone-alt"></i> Gọi Hotline</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- 9. Change Password Tab -->
+        <div class="dashboard-content-tab" id="tab-change-password">
+          <div class="dashboard-tab-header">
+            <h2>Đổi Mật Khẩu Tài Khoản</h2>
+          </div>
+          <div class="dashboard-form-container" style="max-width: 500px;">
+            <form id="staff-change-password-form">
+              <div class="form-group">
+                <label for="staff-current-password">Mật khẩu hiện tại *</label>
+                <input type="password" id="staff-current-password" class="form-control" placeholder="Nhập mật khẩu hiện tại..." required>
+              </div>
+              <div class="form-group">
+                <label for="staff-new-password">Mật khẩu mới *</label>
+                <input type="password" id="staff-new-password" class="form-control" placeholder="Nhập mật khẩu mới..." required>
+              </div>
+              <div class="form-group" style="margin-bottom: 25px;">
+                <label for="staff-confirm-password">Xác nhận mật khẩu mới *</label>
+                <input type="password" id="staff-confirm-password" class="form-control" placeholder="Nhập lại mật khẩu mới..." required>
+              </div>
+              <button type="submit" class="btn-gold" style="width: 100%;">Cập Nhật Mật Khẩu</button>
+            </form>
+          </div>
+        </div>
+      </main>
+    </div>
+
+  </div>
+
+  <script src="/public/js/toast.js"></script>
+  <script src="/public/js/main.js"></script>
+  <script src="/public/js/sidebar-staff.js"></script>
+  <script src="/public/js/staff-dashboard.js"></script>
+</body>
+</html>

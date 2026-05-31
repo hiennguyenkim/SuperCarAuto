@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>So Sánh Siêu Xe — SuperCar Luxury</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/public/css/style.css">
+  <link rel="stylesheet" href="/public/css/cars.css">
+  <link rel="stylesheet" href="/public/css/responsive.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="nav-container">
+      <a href="/" class="logo">
+        <span class="logo-text">SUPERCAR<span>LUXURY</span></span>
+      </a>
+      <nav>
+        <ul class="nav-menu">
+          <li class="nav-item"><a href="/">Trang Chủ</a></li>
+          <li class="nav-item"><a href="/views/cars.html">Bộ Sưu Tập Xe</a></li>
+          <li class="nav-item active"><a href="/views/compare.html">So Sánh</a></li>
+          <li class="nav-item"><a href="/views/finance.html">Trả Góp</a></li>
+          <li class="nav-item"><a href="/views/consignment.html">Ký Gửi</a></li>
+          <li class="nav-item"><a href="/views/contact.html">Liên Hệ</a></li>
+        </ul>
+      </nav>
+      <div class="nav-buttons" id="nav-auth-buttons">
+        <!-- Loaded dynamically -->
+      </div>
+    </div>
+  </header>
+
+  <!-- Comparison Area -->
+  <main class="container compare-container section-padding">
+    <div class="section-header">
+      <span class="subtitle">Đánh giá song song</span>
+      <h2>Bảng So Sánh Thông Số Kỹ Thuật</h2>
+    </div>
+
+    <!-- Selectors for 3 cars -->
+    <div class="compare-selector-grid">
+      <div class="compare-select-box">
+        <i class="fas fa-plus-circle" style="font-size: 2.2rem; color: var(--color-gold);"></i>
+        <select id="compare-select-1" onchange="loadCompareSlot(1, this.value)">
+          <option value="">-- Chọn xe thứ nhất --</option>
+        </select>
+      </div>
+
+      <div class="compare-select-box">
+        <i class="fas fa-plus-circle" style="font-size: 2.2rem; color: var(--color-gold);"></i>
+        <select id="compare-select-2" onchange="loadCompareSlot(2, this.value)">
+          <option value="">-- Chọn xe thứ hai --</option>
+        </select>
+      </div>
+
+      <div class="compare-select-box">
+        <i class="fas fa-plus-circle" style="font-size: 2.2rem; color: var(--color-gold);"></i>
+        <select id="compare-select-3" onchange="loadCompareSlot(3, this.value)">
+          <option value="">-- Chọn xe thứ ba --</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Details Table -->
+    <table class="compare-table" id="compare-results-table">
+      <thead>
+        <tr>
+          <th>Thông Số So Sánh</th>
+          <th id="compare-header-1">Cột Xe 1</th>
+          <th id="compare-header-2">Cột Xe 2</th>
+          <th id="compare-header-3">Cột Xe 3</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Hình Ảnh Minh Họa</td>
+          <td id="comp-img-1">—</td>
+          <td id="comp-img-2">—</td>
+          <td id="comp-img-3">—</td>
+        </tr>
+        <tr>
+          <td>Giá Bán Niêm Yết</td>
+          <td id="comp-price-1">—</td>
+          <td id="comp-price-2">—</td>
+          <td id="comp-price-3">—</td>
+        </tr>
+        <tr>
+          <td>Năm Sản Xuất</td>
+          <td id="comp-year-1">—</td>
+          <td id="comp-year-2">—</td>
+          <td id="comp-year-3">—</td>
+        </tr>
+        <tr>
+          <td>Động Cơ Đốt Trong</td>
+          <td id="comp-engine-1">—</td>
+          <td id="comp-engine-2">—</td>
+          <td id="comp-engine-3">—</td>
+        </tr>
+        <tr>
+          <td>Công Suất Tối Đa</td>
+          <td id="comp-horsepower-1">—</td>
+          <td id="comp-horsepower-2">—</td>
+          <td id="comp-horsepower-3">—</td>
+        </tr>
+        <tr>
+          <td>Mô-men Xoắn Cực Đại</td>
+          <td id="comp-torque-1">—</td>
+          <td id="comp-torque-2">—</td>
+          <td id="comp-torque-3">—</td>
+        </tr>
+        <tr>
+          <td>Hộp Số Truyền Động</td>
+          <td id="comp-transmission-1">—</td>
+          <td id="comp-transmission-2">—</td>
+          <td id="comp-transmission-3">—</td>
+        </tr>
+        <tr>
+          <td>Hệ Dẫn Động Bánh Xe</td>
+          <td id="comp-drivetrain-1">—</td>
+          <td id="comp-drivetrain-2">—</td>
+          <td id="comp-drivetrain-3">—</td>
+        </tr>
+        <tr>
+          <td>Tăng tốc 0-100 km/h</td>
+          <td id="comp-acceleration-1">—</td>
+          <td id="comp-acceleration-2">—</td>
+          <td id="comp-acceleration-3">—</td>
+        </tr>
+        <tr>
+          <td>Vận tốc tối đa</td>
+          <td id="comp-speed-1">—</td>
+          <td id="comp-speed-2">—</td>
+          <td id="comp-speed-3">—</td>
+        </tr>
+        <tr>
+          <td>Chính Sách Bảo Hành</td>
+          <td id="comp-warranty-1">—</td>
+          <td id="comp-warranty-2">—</td>
+          <td id="comp-warranty-3">—</td>
+        </tr>
+        <tr>
+          <td>Tình Trạng Mua Hàng</td>
+          <td id="comp-status-1">—</td>
+          <td id="comp-status-2">—</td>
+          <td id="comp-status-3">—</td>
+        </tr>
+      </tbody>
+    </table>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-container">
+      <div class="footer-logo-desc">
+        <span class="logo-text">SUPERCAR<span>LUXURY</span></span>
+        <p>Hệ thống showroom chuyên phân phối các mẫu siêu xe, xe sang, hypercar chính hãng hàng đầu tại Việt Nam.</p>
+      </div>
+      <div class="footer-section">
+        <h3>Thông Tin Liên Hệ</h3>
+        <ul class="footer-contact-info">
+          <li><i class="fas fa-map-marker-alt"></i> 88 Lê Văn Lương, Thanh Xuân, Hà Nội</li>
+          <li><i class="fas fa-phone"></i> Hotline: 1900 8888</li>
+          <li><i class="fas fa-envelope"></i> Email: info@supercarluxury.vn</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 SuperCar Luxury. All Rights Reserved.</p>
+    </div>
+  </footer>
+
+  <script src="/public/js/toast.js"></script>
+  <script src="/public/js/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      loadCompareDropdowns();
+    });
+
+    async function loadCompareDropdowns() {
+      try {
+        const res = await fetch('/api/cars?all=true');
+        const data = await res.json();
+        if (data.success) {
+          const selects = [
+            document.getElementById('compare-select-1'),
+            document.getElementById('compare-select-2'),
+            document.getElementById('compare-select-3')
+          ];
+          
+          selects.forEach(select => {
+            if (!select) return;
+            let options = select.innerHTML;
+            data.data.forEach(car => {
+              options += `<option value="${car._id}">${car.name} (${car.year})</option>`;
+            });
+            select.innerHTML = options;
+          });
+        }
+      } catch (err) {
+        console.error('Failed to load compare references:', err.message);
+      }
+    }
+
+    // Load specs dynamically on slot selection
+    window.loadCompareSlot = async function(slotNum, carId) {
+      const header = document.getElementById(`compare-header-${slotNum}`);
+      
+      const fields = {
+        img: document.getElementById(`comp-img-${slotNum}`),
+        price: document.getElementById(`comp-price-${slotNum}`),
+        year: document.getElementById(`comp-year-${slotNum}`),
+        engine: document.getElementById(`comp-engine-${slotNum}`),
+        horsepower: document.getElementById(`comp-horsepower-${slotNum}`),
+        torque: document.getElementById(`comp-torque-${slotNum}`),
+        transmission: document.getElementById(`comp-transmission-${slotNum}`),
+        drivetrain: document.getElementById(`comp-drivetrain-${slotNum}`),
+        acceleration: document.getElementById(`comp-acceleration-${slotNum}`),
+        speed: document.getElementById(`comp-speed-${slotNum}`),
+        warranty: document.getElementById(`comp-warranty-${slotNum}`),
+        status: document.getElementById(`comp-status-${slotNum}`)
+      };
+
+      if (!carId) {
+        header.textContent = `Cột Xe ${slotNum}`;
+        Object.keys(fields).forEach(k => fields[k].innerHTML = '—');
+        return;
+      }
+
+      try {
+        const res = await fetch(`/api/cars/${carId}`);
+        const data = await res.json();
+        if (data.success && data.data) {
+          const car = data.data;
+
+          header.textContent = car.name;
+          fields.img.innerHTML = `<img src="${car.images[0]}" class="compare-car-thumb" style="width: 150px; height: 100px; object-fit: cover;">`;
+          fields.price.textContent = formatCurrencyVND(car.price);
+          fields.year.textContent = car.year;
+          fields.engine.textContent = car.engine || 'Vòng tua thể thao';
+          fields.horsepower.textContent = `${car.horsepower} hp`;
+          fields.torque.textContent = car.torque ? `${car.torque} Nm` : 'Đang cập nhật';
+          fields.transmission.textContent = car.transmission || 'Tự động';
+          fields.drivetrain.textContent = car.drivetrain || 'Đang cập nhật';
+          fields.acceleration.textContent = car.acceleration || 'Đang cập nhật';
+          fields.speed.textContent = car.maxSpeed || 'Đang cập nhật';
+          fields.warranty.textContent = car.warranty || 'Đang cập nhật';
+          fields.status.innerHTML = `<span class="badge-status ${car.status}">${car.status}</span>`;
+        }
+      } catch (err) {
+        showToast('Lỗi tải dữ liệu so sánh xe.', 'error');
+      }
+    };
+  </script>
+</body>
+</html>

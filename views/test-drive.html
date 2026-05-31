@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đăng Ký Lái Thử Siêu Xe — SuperCar Luxury</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/public/css/style.css">
+  <link rel="stylesheet" href="/public/css/auth.css">
+  <link rel="stylesheet" href="/public/css/responsive.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="nav-container">
+      <a href="/" class="logo">
+        <span class="logo-text">SUPERCAR<span>LUXURY</span></span>
+      </a>
+      <div class="nav-buttons">
+        <a href="/views/cars.html" class="btn-dark" style="padding: 10px 20px; font-size: 0.75rem;"><i class="fas fa-arrow-left"></i> Quay Lại</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Form Area -->
+  <div class="auth-wrapper" style="padding-top: 140px; padding-bottom: 80px;">
+    <div class="auth-container" style="max-width: 600px;">
+      <div class="auth-header">
+        <h2>Đăng Ký Lái Thử</h2>
+        <p>Hệ thống chỉ cho phép lái thử với xe ở trạng thái available và khách hàng có bằng lái xe hợp lệ</p>
+      </div>
+
+      <!-- Car Summary Card -->
+      <div id="selected-car-info" style="display: none; align-items: center; gap: 15px; padding: 15px; background: rgba(255,255,255,0.03); border: var(--glass-border); border-radius: 4px; margin-bottom: 30px;">
+        <!-- Inject info -->
+      </div>
+
+      <form id="test-drive-form" enctype="multipart/form-data">
+        <input type="hidden" id="carId" value="">
+
+        <div class="form-group">
+          <label for="fullName">Họ và Tên Người Lái Thử *</label>
+          <input type="text" id="fullName" class="form-control" placeholder="Nhập họ và tên..." required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="phone">Số Điện Thoại Liên Hệ *</label>
+            <input type="tel" id="phone" class="form-control" placeholder="Nhập số điện thoại..." required>
+          </div>
+          <div class="form-group">
+            <label for="email">Địa Chỉ Email *</label>
+            <input type="email" id="email" class="form-control" placeholder="Nhập email..." required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="testDriveDate">Ngày Đăng Ký Lái Thử *</label>
+            <input type="date" id="testDriveDate" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label for="testDriveTime">Giờ Hẹn Lái *</label>
+            <select id="testDriveTime" class="form-control" required>
+              <option value="09:00">09:00 AM</option>
+              <option value="10:00" selected>10:00 AM</option>
+              <option value="14:00">02:00 PM</option>
+              <option value="15:00">03:00 PM</option>
+              <option value="16:00">04:00 PM</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="drivingExperience">Kinh Nghiệm Lái Xe Của Bạn *</label>
+          <select id="drivingExperience" class="form-control" required>
+            <option value="Dưới 2 năm">Ít hơn 2 năm</option>
+            <option value="Từ 2 đến 5 năm" selected>Từ 2 đến 5 năm kinh nghiệm</option>
+            <option value="Trên 5 năm">Trên 5 năm kinh nghiệm lái xe</option>
+            <option value="Đã từng sở hữu siêu xe">Đã từng sở hữu / lái thử các dòng siêu xe thể thao</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="licenseImage">Ảnh Chụp Bằng Lái Xe (B2 trở lên) *</label>
+          <input type="file" id="licenseImage" class="form-control" accept="image/*" required>
+          <small style="color: var(--color-silver); display: block; margin-top: 5px;">Vui lòng chụp rõ nét cả 2 mặt bằng lái xe để bộ phận nhân sự phê duyệt lịch nhanh chóng.</small>
+        </div>
+
+        <div class="form-group">
+          <label for="note">Ghi Chú Yêu Cầu Riêng</label>
+          <textarea id="note" class="form-control" rows="2" placeholder="Ví dụ: Muốn thử chế độ Launch Control, muốn lái thử kèm gia đình..."></textarea>
+        </div>
+
+        <button type="submit" class="btn-gold auth-btn">Gửi Đăng Ký Lái Thử</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="/public/js/toast.js"></script>
+  <script src="/public/js/main.js"></script>
+  <script>
+    // Handle form submissions for multipart file upload
+    document.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const carId = urlParams.get('carId');
+      const form = document.getElementById('test-drive-form');
+
+      if (carId) {
+        document.getElementById('carId').value = carId;
+        fetchCarSummary(carId);
+      }
+
+      if (form) {
+        form.addEventListener('submit', async (e) => {
+          e.preventDefault();
+
+          const carIdVal = document.getElementById('carId').value;
+          const fullName = document.getElementById('fullName').value.trim();
+          const phone = document.getElementById('phone').value.trim();
+          const email = document.getElementById('email').value.trim();
+          const testDriveDate = document.getElementById('testDriveDate').value;
+          const testDriveTime = document.getElementById('testDriveTime').value;
+          const drivingExperience = document.getElementById('drivingExperience').value;
+          const note = document.getElementById('note').value.trim();
+          const licenseFile = document.getElementById('licenseImage').files[0];
+
+          if (!carIdVal || !fullName || !phone || !email || !testDriveDate || !testDriveTime || !licenseFile) {
+            showToast('Vui lòng nhập đầy đủ các thông tin bắt buộc và đính kèm bằng lái!', 'error');
+            return;
+          }
+
+          const formData = new FormData();
+          formData.append('carId', carIdVal);
+          formData.append('customerInfo', JSON.stringify({ fullName, phone, email, note }));
+          formData.append('testDriveDate', testDriveDate);
+          formData.append('testDriveTime', testDriveTime);
+          formData.append('drivingExperience', drivingExperience);
+          formData.append('licenseImage', licenseFile); // File attachment matching multer field name
+
+          try {
+            const res = await fetch('/api/test-drives', {
+              method: 'POST',
+              body: formData // Must send as FormData for file uploading
+            });
+            const data = await res.json();
+
+            if (res.ok && data.success) {
+              showToast('Đăng ký lái thử siêu xe thành công! Mời theo dõi lịch duyệt ở Dashboard.', 'success');
+              setTimeout(() => {
+                window.location.href = '/views/order-success.html?type=testdrive';
+              }, 1000);
+            } else {
+              showToast(data.message || 'Gửi yêu cầu thất bại. Kiểm tra lại thông tin đăng nhập.', 'error');
+            }
+          } catch (err) {
+            showToast('Lỗi kết nối máy chủ.', 'error');
+          }
+        });
+      }
+    });
+
+    async function fetchCarSummary(carId) {
+      try {
+        const res = await fetch(`/api/cars/${carId}`);
+        const data = await res.json();
+        if (data.success && data.data) {
+          const car = data.data;
+          const carInfoDiv = document.getElementById('selected-car-info');
+          if (carInfoDiv) {
+            carInfoDiv.style.display = 'flex';
+            carInfoDiv.innerHTML = `
+              <img src="${car.images[0]}" alt="${car.name}" style="width: 100px; height: 65px; object-fit: cover; border-radius: 4px;">
+              <div>
+                <h4 style="color: var(--color-white); font-size: 1rem; margin-bottom: 5px;">${car.name}</h4>
+                <p style="color: var(--color-gold); font-size: 0.9rem; font-weight: 600;">${formatCurrencyVND(car.price)}</p>
+              </div>
+            `;
+          }
+        }
+      } catch (err) {
+        console.error('Failed to load car details:', err.message);
+      }
+    }
+  </script>
+</body>
+</html>

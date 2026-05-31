@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đặt Cọc Siêu Xe — SuperCar Luxury</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/public/css/style.css">
+  <link rel="stylesheet" href="/public/css/auth.css">
+  <link rel="stylesheet" href="/public/css/responsive.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="nav-container">
+      <a href="/" class="logo">
+        <span class="logo-text">SUPERCAR<span>LUXURY</span></span>
+      </a>
+      <div class="nav-buttons">
+        <a href="/views/cars.html" class="btn-dark" style="padding: 10px 20px; font-size: 0.75rem;"><i class="fas fa-arrow-left"></i> Quay Lại</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Form Area -->
+  <div class="auth-wrapper" style="padding-top: 140px; padding-bottom: 80px;">
+    <div class="auth-container" style="max-width: 600px;">
+      <div class="auth-header">
+        <h2>Đặt Cọc Giữ Xe</h2>
+        <p>Hệ thống tự động chuyển trạng thái xe sang RESERVED ngay lập tức để tránh đặt cọc trùng</p>
+      </div>
+
+      <!-- Car Summary Card -->
+      <div id="selected-car-info" style="display: none; align-items: center; gap: 15px; padding: 15px; background: rgba(255,255,255,0.03); border: var(--glass-border); border-radius: 4px; margin-bottom: 30px;">
+        <!-- Inject info -->
+      </div>
+
+      <!-- Bank Transfer Details -->
+      <div id="bank-transfer-details" style="background: rgba(201, 168, 76, 0.05); border: 1px dashed var(--color-gold); padding: 20px; border-radius: 4px; margin-bottom: 30px; font-size: 0.85rem;">
+        <h4 style="color: var(--color-gold); margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px;"><i class="fas fa-university"></i> Thông Tin Chuyển Khoản</h4>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <p>Ngân hàng: <strong id="bank-name">Techcombank (TCB)</strong></p>
+          <p style="display: flex; align-items: center; gap: 10px;">
+            Số tài khoản: <strong id="bank-account">1903548888888</strong>
+            <button type="button" class="btn-outline" onclick="copyText('bank-account')" style="padding: 2px 8px; font-size: 0.7rem; border-radius: 3px; cursor: pointer;"><i class="far fa-copy"></i> Copy</button>
+          </p>
+          <p>Chủ tài khoản: <strong id="bank-holder">CONG TY CO PHAN SUPERCAR LUXURY VIET NAM</strong></p>
+          <p>Số tiền cọc: <strong style="color: var(--color-white);" id="bank-deposit-val">Đang tải...</strong></p>
+          <p style="display: flex; align-items: center; gap: 10px;">
+            Nội dung chuyển khoản: <strong style="color: var(--color-gold);" id="bank-transfer-note">CK COC [MA XE]</strong>
+            <button type="button" class="btn-outline" onclick="copyText('bank-transfer-note')" style="padding: 2px 8px; font-size: 0.7rem; border-radius: 3px; cursor: pointer;"><i class="far fa-copy"></i> Copy</button>
+          </p>
+          <div id="bank-qr-code-container" style="display: none; margin-top: 15px; text-align: center;">
+            <p style="margin-bottom: 8px; color: var(--color-silver);">Quét mã QR để chuyển khoản nhanh:</p>
+            <img id="bank-qr-code-img" src="" alt="QR Code" style="max-width: 180px; border: var(--glass-border); border-radius: 4px;">
+          </div>
+        </div>
+      </div>
+
+      <form id="deposit-form" enctype="multipart/form-data">
+        <input type="hidden" id="carId" value="">
+        <input type="hidden" id="depositAmount" value="0">
+
+        <div class="form-group">
+          <label for="fullName">Họ và Tên Người Đứng Tên Đăng Ký Xe *</label>
+          <input type="text" id="fullName" class="form-control" placeholder="Nhập họ và tên trên giấy tờ..." required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="phone">Số Điện Thoại Liên Hệ *</label>
+            <input type="tel" id="phone" class="form-control" placeholder="Nhập số điện thoại..." required>
+          </div>
+          <div class="form-group">
+            <label for="email">Địa Chỉ Email Nhận Hợp Đồng *</label>
+            <input type="email" id="email" class="form-control" placeholder="Nhập email..." required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="paymentMethod">Phương Thức Thanh Toán Cọc *</label>
+          <select id="paymentMethod" class="form-control" required>
+            <option value="bank_transfer" selected>Chuyển khoản ngân hàng trực tuyến</option>
+            <option value="e_wallet">Thanh toán qua ví điện tử Momo / VNPAY</option>
+            <option value="cash">Nộp tiền mặt trực tiếp tại showroom</option>
+          </select>
+        </div>
+
+        <div class="form-group" id="proof-upload-group">
+          <label for="paymentProof">Ảnh Minh Chứng Chuyển Khoản Thành Công *</label>
+          <div id="paste-drop-zone" style="border: 2px dashed rgba(201, 168, 76, 0.4); border-radius: 4px; padding: 30px; text-align: center; background: rgba(255,255,255,0.01); cursor: pointer; position: relative; transition: var(--transition-smooth);">
+            <i class="fas fa-cloud-upload-alt" style="font-size: 2rem; color: var(--color-gold); margin-bottom: 10px;"></i>
+            <p style="margin-bottom: 5px; font-size: 0.85rem; color: var(--color-white);">Kéo thả ảnh, click để chọn file hoặc <strong>nhấn Ctrl+V để paste ảnh từ clipboard</strong></p>
+            <input type="file" id="paymentProof" style="position: absolute; top:0; left:0; width:100%; height:100%; opacity:0; cursor:pointer;" accept="image/*" required>
+          </div>
+          <div id="bill-preview-container" style="display: none; margin-top: 15px; position: relative; border: var(--glass-border); border-radius: 4px; padding: 10px; text-align: center; background: rgba(255, 255, 255, 0.02);">
+            <img id="bill-preview-img" src="" alt="Bill Preview" style="max-width: 100%; max-height: 250px; border-radius: 4px;">
+            <button type="button" id="btn-remove-preview" class="btn-outline" style="position: absolute; top: 10px; right: 10px; padding: 5px 10px; font-size: 0.75rem; background: rgba(0,0,0,0.8); cursor: pointer;"><i class="fas fa-trash"></i> Xóa</button>
+          </div>
+          <small style="color: var(--color-silver); display: block; margin-top: 5px;">Vui lòng đính kèm ảnh chụp màn hình hóa đơn chuyển tiền thành công để chúng tôi duyệt cọc.</small>
+        </div>
+
+        <div class="form-group">
+          <label for="note">Ghi Chú Đơn Đặt Cọc</label>
+          <textarea id="note" class="form-control" rows="2" placeholder="Ghi chú thêm thông tin nếu có..."></textarea>
+        </div>
+
+        <button type="submit" id="submit-deposit-btn" class="btn-gold auth-btn" disabled>Gửi Biên Lai & Xác Nhận Đặt Cọc</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="/public/js/toast.js"></script>
+  <script src="/public/js/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const carId = urlParams.get('carId');
+      const form = document.getElementById('deposit-form');
+
+      if (carId) {
+        document.getElementById('carId').value = carId;
+        fetchCarSummary(carId);
+      } else {
+        showToast('Không tìm thấy thông tin xe cần đặt cọc.', 'error');
+        setTimeout(() => { window.location.href = '/views/cars.html'; }, 1500);
+      }
+
+      if (form) {
+        form.addEventListener('submit', handleDepositSubmit);
+      }
+
+      // Load Site Settings bank info
+      loadBankSettings();
+
+      // Listen to Payment Method dropdown change
+      const paymentMethodSelect = document.getElementById('paymentMethod');
+      paymentMethodSelect.addEventListener('change', handlePaymentMethodChange);
+
+      // Listen to File select
+      const fileInput = document.getElementById('paymentProof');
+      fileInput.addEventListener('change', (e) => {
+        if (e.target.files && e.target.files[0]) {
+          previewAndSetFile(e.target.files[0]);
+        }
+      });
+
+      // Listen to paste event
+      document.addEventListener('paste', handleClipboardPaste);
+
+      // Remove preview button
+      document.getElementById('btn-remove-preview').addEventListener('click', () => {
+        fileInput.value = '';
+        document.getElementById('bill-preview-container').style.display = 'none';
+        document.getElementById('bill-preview-img').src = '';
+        updateSubmitButtonState();
+      });
+    });
+
+    async function loadBankSettings() {
+      try {
+        const res = await fetch('/api/site-settings');
+        const data = await res.json();
+        if (data.success && data.data && data.data.bankInfo) {
+          const bank = data.data.bankInfo;
+          if (bank.bankName) document.getElementById('bank-name').textContent = bank.bankName;
+          if (bank.accountNumber) document.getElementById('bank-account').textContent = bank.accountNumber;
+          if (bank.accountHolder) document.getElementById('bank-holder').textContent = bank.accountHolder;
+          
+          if (bank.qrCode) {
+            document.getElementById('bank-qr-code-img').src = bank.qrCode;
+            document.getElementById('bank-qr-code-container').style.display = 'block';
+          } else {
+            document.getElementById('bank-qr-code-container').style.display = 'none';
+          }
+        }
+      } catch (err) {
+        console.error('Failed to load bank settings:', err.message);
+      }
+    }
+
+    function handlePaymentMethodChange() {
+      const method = document.getElementById('paymentMethod').value;
+      const bankDetails = document.getElementById('bank-transfer-details');
+      const uploadGroup = document.getElementById('proof-upload-group');
+      const fileInput = document.getElementById('paymentProof');
+
+      if (method === 'bank_transfer') {
+        bankDetails.style.display = 'block';
+        uploadGroup.style.display = 'block';
+        fileInput.required = true;
+      } else {
+        bankDetails.style.display = 'none';
+        uploadGroup.style.display = 'none';
+        fileInput.required = false;
+      }
+      updateSubmitButtonState();
+    }
+
+    function handleClipboardPaste(e) {
+      const method = document.getElementById('paymentMethod').value;
+      if (method !== 'bank_transfer') return;
+
+      const items = e.clipboardData?.items;
+      if (!items) return;
+      for (const item of items) {
+        if (item.type.startsWith('image/')) {
+          const file = item.getAsFile();
+          previewAndSetFile(file);
+          break;
+        }
+      }
+    }
+
+    function previewAndSetFile(file) {
+      if (!file) return;
+
+      // Programmatically update file input files using DataTransfer API
+      const fileInput = document.getElementById('paymentProof');
+      const dataTransfer = new DataTransfer();
+      dataTransfer.items.add(file);
+      fileInput.files = dataTransfer.files;
+
+      // Show preview
+      const previewImg = document.getElementById('bill-preview-img');
+      const previewContainer = document.getElementById('bill-preview-container');
+      
+      const objectURL = URL.createObjectURL(file);
+      previewImg.src = objectURL;
+      previewContainer.style.display = 'block';
+
+      updateSubmitButtonState();
+    }
+
+    function updateSubmitButtonState() {
+      const submitBtn = document.getElementById('submit-deposit-btn');
+      const fileInput = document.getElementById('paymentProof');
+      const paymentMethod = document.getElementById('paymentMethod').value;
+      
+      if (paymentMethod === 'bank_transfer') {
+        submitBtn.disabled = !(fileInput.files && fileInput.files.length > 0);
+      } else {
+        submitBtn.disabled = false;
+      }
+    }
+
+    window.copyText = function(id) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      navigator.clipboard.writeText(el.innerText || el.textContent)
+        .then(() => showToast('Đã sao chép vào clipboard!', 'success'))
+        .catch(() => showToast('Không thể sao chép!', 'error'));
+    };
+
+    async function fetchCarSummary(carId) {
+      try {
+        const res = await fetch(`/api/cars/${carId}`);
+        const data = await res.json();
+        if (data.success && data.data) {
+          const car = data.data;
+          
+          // Pre-fill hidden fields
+          const depAmount = car.depositAmount || (car.price * 0.05);
+          document.getElementById('depositAmount').value = depAmount;
+
+          // Render car summary
+          const carInfoDiv = document.getElementById('selected-car-info');
+          if (carInfoDiv) {
+            carInfoDiv.style.display = 'flex';
+            carInfoDiv.innerHTML = `
+              <img src="${car.images[0]}" alt="${car.name}" style="width: 100px; height: 65px; object-fit: cover; border-radius: 4px;">
+              <div>
+                <h4 style="color: var(--color-white); font-size: 1rem; margin-bottom: 5px;">${car.name}</h4>
+                <p style="color: var(--color-gold); font-size: 0.9rem; font-weight: 600;">Cọc giữ xe: ${formatCurrencyVND(depAmount)}</p>
+              </div>
+            `;
+          }
+
+          // Render bank transfers notes
+          document.getElementById('bank-deposit-val').textContent = formatCurrencyVND(depAmount);
+          document.getElementById('bank-transfer-note').textContent = `DAT COC ${car.code}`;
+        }
+      } catch (err) {
+        console.error('Failed to load car details:', err.message);
+      }
+    }
+
+    async function handleDepositSubmit(e) {
+      e.preventDefault();
+
+      const carId = document.getElementById('carId').value;
+      const depositAmount = document.getElementById('depositAmount').value;
+      const fullName = document.getElementById('fullName').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const paymentMethod = document.getElementById('paymentMethod').value;
+      const note = document.getElementById('note').value.trim();
+      const proofFile = document.getElementById('paymentProof').files[0];
+
+      if (!fullName || !phone || !email) {
+        showToast('Vui lòng nhập đầy đủ thông tin bắt buộc!', 'error');
+        return;
+      }
+
+      if (paymentMethod === 'bank_transfer' && !proofFile) {
+        showToast('Vui lòng tải lên hoặc paste ảnh minh chứng chuyển khoản!', 'error');
+        return;
+      }
+
+      // Initial deposit registration (Race condition safe)
+      try {
+        const createRes = await fetch('/api/deposits', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            carId,
+            customerInfo: { fullName, phone, email, note },
+            depositAmount: Number(depositAmount),
+            paymentMethod
+          })
+        });
+        const createData = await createRes.json();
+
+        if (!createRes.ok || !createData.success) {
+          showToast(createData.message || 'Lỗi đặt cọc giữ xe.', 'error');
+          return;
+        }
+
+        const depositId = createData.data._id;
+
+        if (paymentMethod === 'bank_transfer') {
+          // Upload payment proof receipt to transition status to pending_confirm
+          const uploadData = new FormData();
+          uploadData.append('paymentProof', proofFile);
+
+          const uploadRes = await fetch(`/api/deposits/${depositId}/payment-proof`, {
+            method: 'POST',
+            body: uploadData
+          });
+          const uploadResult = await uploadRes.json();
+
+          if (uploadRes.ok && uploadResult.success) {
+            showToast('Gửi minh chứng thanh toán cọc thành công!', 'success');
+            setTimeout(() => {
+              window.location.href = `/views/order-success.html?type=deposit&code=${createData.data.depositCode}`;
+            }, 1000);
+          } else {
+            showToast(uploadResult.message || 'Đã tạo cọc thành công nhưng lỗi tải ảnh chuyển tiền.', 'warning');
+          }
+        } else {
+          showToast('Đăng ký đặt cọc thành công!', 'success');
+          setTimeout(() => {
+            window.location.href = `/views/order-success.html?type=deposit&code=${createData.data.depositCode}`;
+          }, 1000);
+        }
+      } catch (err) {
+        showToast('Lỗi kết nối máy chủ.', 'error');
+      }
+    }
+  </script>
+</body>
+</html>

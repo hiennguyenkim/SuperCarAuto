@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đặt Lịch Hẹn Xem Xe — SuperCar Luxury</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/public/css/style.css">
+  <link rel="stylesheet" href="/public/css/auth.css">
+  <link rel="stylesheet" href="/public/css/responsive.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="nav-container">
+      <a href="/" class="logo">
+        <span class="logo-text">SUPERCAR<span>LUXURY</span></span>
+      </a>
+      <div class="nav-buttons">
+        <a href="/views/cars.html" class="btn-dark" style="padding: 10px 20px; font-size: 0.75rem;"><i class="fas fa-arrow-left"></i> Quay Lại</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Form Area -->
+  <div class="auth-wrapper" style="padding-top: 140px; padding-bottom: 80px;">
+    <div class="auth-container" style="max-width: 600px;">
+      <div class="auth-header">
+        <h2>Đặt Lịch Xem Xe</h2>
+        <p>Chọn khung giờ và showroom thuận tiện nhất để gặp nhân viên hỗ trợ</p>
+      </div>
+
+      <!-- Car Summary Card (Loaded Dynamically) -->
+      <div id="selected-car-info" style="display: none; align-items: center; gap: 15px; padding: 15px; background: rgba(255,255,255,0.03); border: var(--glass-border); border-radius: 4px; margin-bottom: 30px;">
+        <!-- Inject info -->
+      </div>
+
+      <form id="appointment-form">
+        <input type="hidden" id="carId" value="">
+
+        <div class="form-group">
+          <label for="fullName">Họ và Tên Người Liên Hệ *</label>
+          <input type="text" id="fullName" class="form-control" placeholder="Nhập họ và tên..." required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="phone">Số Điện Thoại Nhận SMS *</label>
+            <input type="tel" id="phone" class="form-control" placeholder="Nhập số điện thoại..." required>
+          </div>
+          <div class="form-group">
+            <label for="email">Địa Chỉ Email *</label>
+            <input type="email" id="email" class="form-control" placeholder="Nhập email..." required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="appointmentDate">Ngày Đến Showroom *</label>
+            <input type="date" id="appointmentDate" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label for="appointmentTime">Khung Giờ Hẹn *</label>
+            <select id="appointmentTime" class="form-control" required>
+              <option value="09:00">09:00 AM</option>
+              <option value="10:00" selected>10:00 AM</option>
+              <option value="11:00">11:00 AM</option>
+              <option value="14:00">02:00 PM</option>
+              <option value="15:00">03:00 PM</option>
+              <option value="16:00">04:00 PM</option>
+              <option value="17:00">05:00 PM</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="showroom">Showroom Đăng Ký *</label>
+            <select id="showroom" class="form-control" required>
+              <option value="Showroom Hà Nội">88 Lê Văn Lương, Hà Nội</option>
+              <option value="Showroom TP.HCM">Quận 7, TP. Hồ Chí Minh</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="groupSize">Số Người Đi Cùng</label>
+            <input type="number" id="groupSize" class="form-control" value="1" min="1" max="10">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="note">Yêu Cầu Đặc Biệt (Ví dụ: Muốn test nổ máy, tư vấn pháp lý xe cũ...)</label>
+          <textarea id="note" class="form-control" rows="3" placeholder="Nhập ghi chú của bạn..."></textarea>
+        </div>
+
+        <button type="submit" class="btn-gold auth-btn">Gửi Yêu Cầu Đặt Lịch</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="/public/js/toast.js"></script>
+  <script src="/public/js/main.js"></script>
+  <script src="/public/js/appointment.js"></script>
+</body>
+</html>

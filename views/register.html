@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đăng Ký Tài Khoản — SuperCar Luxury</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/public/css/style.css">
+  <link rel="stylesheet" href="/public/css/auth.css">
+  <link rel="stylesheet" href="/public/css/responsive.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="nav-container">
+      <a href="/" class="logo">
+        <span class="logo-text">SUPERCAR<span>LUXURY</span></span>
+      </a>
+      <div class="nav-buttons">
+        <a href="/" class="btn-dark" style="padding: 10px 20px; font-size: 0.75rem;"><i class="fas fa-arrow-left"></i> Quay Lại</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Register Area -->
+  <div class="auth-wrapper" style="padding-top: 140px; padding-bottom: 80px;">
+    <div class="auth-container" style="max-width: 600px;">
+      <div class="auth-header">
+        <h2>Đăng Ký</h2>
+        <p>Đăng ký tài khoản để gửi yêu cầu lái thử, đặt cọc giữ siêu xe</p>
+      </div>
+      <form id="register-form">
+        <div class="form-group">
+          <label for="fullName">Họ và Tên *</label>
+          <input type="text" id="fullName" class="form-control" placeholder="Nhập họ và tên..." required>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="username">Tên đăng nhập *</label>
+            <input type="text" id="username" class="form-control" placeholder="Nhập tên đăng nhập..." required>
+          </div>
+          <div class="form-group">
+            <label for="phone">Số điện thoại *</label>
+            <input type="tel" id="phone" class="form-control" placeholder="Ví dụ: 0912345678" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Địa chỉ Email *</label>
+          <input type="email" id="email" class="form-control" placeholder="Nhập địa chỉ email..." required>
+        </div>
+
+        <div class="form-group">
+          <label for="address">Địa Chỉ Thường Trú</label>
+          <input type="text" id="address" class="form-control" placeholder="Nhập địa chỉ liên hệ...">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="password">Mật Khẩu *</label>
+            <input type="password" id="password" class="form-control" placeholder="Tối thiểu 6 ký tự..." required>
+          </div>
+          <div class="form-group">
+            <label for="confirmPassword">Nhập Lại Mật Khẩu *</label>
+            <input type="password" id="confirmPassword" class="form-control" placeholder="Xác nhận mật khẩu..." required>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-gold auth-btn">Tạo Tài Khoản</button>
+      </form>
+      <div style="text-align: center; margin-top: 30px; font-size: 0.85rem; color: var(--color-silver);">
+        Đã có tài khoản? <a href="/views/login.html" style="color: var(--color-gold); font-weight: 600;">Đăng nhập</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="/public/js/toast.js"></script>
+  <script src="/public/js/main.js"></script>
+  <script src="/public/js/auth.js"></script>
+</body>
+</html>

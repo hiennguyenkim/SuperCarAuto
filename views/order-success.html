@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Giao Dịch Thành Công — SuperCar Luxury</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/public/css/style.css">
+  <link rel="stylesheet" href="/public/css/auth.css">
+  <link rel="stylesheet" href="/public/css/responsive.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="nav-container">
+      <a href="/" class="logo">
+        <span class="logo-text">SUPERCAR<span>LUXURY</span></span>
+      </a>
+      <div class="nav-buttons">
+        <a href="/" class="btn-dark" style="padding: 10px 20px; font-size: 0.75rem;"><i class="fas fa-home"></i> Trang Chủ</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Success Area -->
+  <div class="auth-wrapper">
+    <div class="auth-container" style="text-align: center; max-width: 550px;">
+      <div style="width: 80px; height: 80px; border-radius: 50%; background: rgba(85, 166, 48, 0.1); border: 2px solid #55a630; display: flex; align-items: center; justify-content: center; margin: 0 auto 30px; color: #55a630; font-size: 2.2rem;">
+        <i class="fas fa-check"></i>
+      </div>
+      
+      <h2 style="font-size: 2.2rem; margin-bottom: 15px;" id="success-title">Thành Công</h2>
+      <p style="color: var(--color-silver); font-size: 0.95rem; margin-bottom: 30px;" id="success-desc">
+        Yêu cầu của bạn đã được tiếp nhận và xử lý.
+      </p>
+
+      <div style="background: rgba(255,255,255,0.02); border: var(--glass-border); padding: 25px; border-radius: 4px; text-align: left; margin-bottom: 35px; font-size: 0.9rem;" id="success-details-card">
+        <!-- Loaded dynamically -->
+      </div>
+
+      <div style="display: flex; gap: 15px; justify-content: center;">
+        <a href="/views/user-dashboard.html" class="btn-gold" style="padding: 12px 24px; font-size: 0.8rem;">Vào Dashboard</a>
+        <a href="/views/cars.html" class="btn-outline" style="padding: 12px 24px; font-size: 0.8rem;">Xem Thêm Xe</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="/public/js/toast.js"></script>
+  <script src="/public/js/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const type = urlParams.get('type');
+      const code = urlParams.get('code') || '';
+
+      const titleEl = document.getElementById('success-title');
+      const descEl = document.getElementById('success-desc');
+      const cardEl = document.getElementById('success-details-card');
+
+      if (type === 'appointment') {
+        titleEl.textContent = 'Đặt Lịch Hẹn Thành Công!';
+        descEl.textContent = 'Yêu cầu đặt lịch đến showroom xem xe của bạn đã gửi thành công.';
+        cardEl.innerHTML = `
+          <p style="margin-bottom: 8px;"><i class="far fa-clock" style="color: var(--color-gold);"></i> Nhân viên showroom sẽ chủ động liên hệ xác nhận giờ hẹn với bạn trong vòng 30 phút.</p>
+          <p><i class="fas fa-shield-alt" style="color: var(--color-gold);"></i> Bạn có thể kiểm tra trạng thái và lịch làm việc của người phụ trách tại mục Lịch Hẹn trong Dashboard cá nhân.</p>
+        `;
+      } else if (type === 'testdrive') {
+        titleEl.textContent = 'Đăng Ký Lái Thử Thành Công!';
+        descEl.textContent = 'Yêu cầu đăng ký lái thử siêu xe của bạn đã được chuyển tới bộ phận showroom kiểm tra.';
+        cardEl.innerHTML = `
+          <p style="margin-bottom: 8px;"><i class="fas fa-file-signature" style="color: var(--color-gold);"></i> Bộ phận chăm sóc khách hàng sẽ thẩm định ảnh chụp bằng lái xe và liên hệ lại cho bạn.</p>
+          <p><i class="fas fa-info-circle" style="color: var(--color-gold);"></i> Vui lòng mang theo bằng lái xe gốc khi đến ngày lái thử thực tế tại showroom.</p>
+        `;
+      } else if (type === 'deposit') {
+        titleEl.textContent = 'Đặt Cọc Thành Công!';
+        descEl.textContent = 'Hệ thống đã nhận được yêu cầu đặt cọc giữ xe cùng biên lai chuyển tiền từ bạn.';
+        cardEl.innerHTML = `
+          <p style="margin-bottom: 8px;">Mã đặt cọc: <strong style="color: var(--color-gold); font-size: 1.1rem;">${code}</strong></p>
+          <p style="margin-bottom: 8px;"><i class="fas fa-lock" style="color: var(--color-gold);"></i> Siêu xe này đã được tạm khóa chuyển sang trạng thái <strong>ĐÃ ĐẶT CỌC (RESERVED)</strong> để đảm bảo không ai mua trùng.</p>
+          <p><i class="fas fa-check-double" style="color: var(--color-gold);"></i> Nhân viên showroom sẽ kiểm định giao dịch thanh toán tài khoản và xác nhận trong vòng 1-2 giờ.</p>
+        `;
+      } else {
+        cardEl.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>

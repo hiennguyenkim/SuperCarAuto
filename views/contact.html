@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Liên Hệ Showroom — SuperCar Luxury</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/public/css/style.css">
+  <link rel="stylesheet" href="/public/css/auth.css">
+  <link rel="stylesheet" href="/public/css/responsive.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="nav-container">
+      <a href="/" class="logo">
+        <span class="logo-text">SUPERCAR<span>LUXURY</span></span>
+      </a>
+      <nav>
+        <ul class="nav-menu">
+          <li class="nav-item"><a href="/">Trang Chủ</a></li>
+          <li class="nav-item"><a href="/views/cars.html">Bộ Sưu Tập Xe</a></li>
+          <li class="nav-item"><a href="/views/compare.html">So Sánh</a></li>
+          <li class="nav-item"><a href="/views/finance.html">Trả Góp</a></li>
+          <li class="nav-item"><a href="/views/consignment.html">Ký Gửi</a></li>
+          <li class="nav-item active"><a href="/views/contact.html">Liên Hệ</a></li>
+        </ul>
+      </nav>
+      <div class="nav-buttons" id="nav-auth-buttons">
+        <!-- Loaded dynamically -->
+      </div>
+    </div>
+  </header>
+
+  <!-- Contact Section -->
+  <div class="auth-wrapper" style="padding-top: 140px; padding-bottom: 80px;">
+    <div class="auth-container" style="max-width: 600px;">
+      <div class="auth-header">
+        <h2>Liên Hệ Hỗ Trợ</h2>
+        <p>Gửi ý kiến đóng góp hoặc yêu cầu tư vấn. Chúng tôi luôn sẵn sàng lắng nghe bạn.</p>
+      </div>
+      <form id="contact-form">
+        <div class="form-group">
+          <label for="fullName">Họ và Tên Của Bạn *</label>
+          <input type="text" id="fullName" class="form-control" placeholder="Nhập họ và tên..." required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="email">Địa Chỉ Email *</label>
+            <input type="email" id="email" class="form-control" placeholder="Nhập email..." required>
+          </div>
+          <div class="form-group">
+            <label for="phone">Số Điện thoại Liên Lạc *</label>
+            <input type="tel" id="phone" class="form-control" placeholder="Nhập số điện thoại..." required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="subject">Chủ Đề Cần Tư Vấn *</label>
+          <select id="subject" class="form-control" required>
+            <option value="Tư vấn mua xe mới" selected>Tư vấn mua siêu xe mới</option>
+            <option value="Thủ tục ký gửi xe">Dịch vụ ký gửi siêu xe</option>
+            <option value="Tính toán trả góp tài chính">Tài chính trả góp ngân hàng</option>
+            <option value="Ý kiến phản hồi dịch vụ">Đóng góp ý kiến & Khiếu nại</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="message">Nội Dung Chi Tiết Câu Hỏi *</label>
+          <textarea id="message" class="form-control" rows="4" placeholder="Nhập tin nhắn liên hệ của bạn tại đây..." required></textarea>
+        </div>
+
+        <button type="submit" class="btn-gold auth-btn">Gửi Liên Hệ</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-container">
+      <div class="footer-logo-desc">
+        <span class="logo-text">SUPERCAR<span>LUXURY</span></span>
+        <p>Hệ thống showroom chuyên phân phối các mẫu siêu xe, xe sang, hypercar chính hãng hàng đầu tại Việt Nam.</p>
+      </div>
+      <div class="footer-section">
+        <h3>Thông Tin Liên Hệ</h3>
+        <ul class="footer-contact-info">
+          <li><i class="fas fa-map-marker-alt"></i> 88 Lê Văn Lương, Thanh Xuân, Hà Nội</li>
+          <li><i class="fas fa-phone"></i> Hotline: 1900 8888</li>
+          <li><i class="fas fa-envelope"></i> Email: info@supercarluxury.vn</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 SuperCar Luxury. All Rights Reserved.</p>
+    </div>
+  </footer>
+
+  <script src="/public/js/toast.js"></script>
+  <script src="/public/js/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('contact-form');
+      if (form) {
+        form.addEventListener('submit', async (e) => {
+          e.preventDefault();
+
+          const fullName = document.getElementById('fullName').value.trim();
+          const email = document.getElementById('email').value.trim();
+          const phone = document.getElementById('phone').value.trim();
+          const subject = document.getElementById('subject').value;
+          const message = document.getElementById('message').value.trim();
+
+          if (!fullName || !email || !phone || !message) {
+            showToast('Vui lòng nhập các thông tin bắt buộc!', 'error');
+            return;
+          }
+
+          try {
+            const res = await fetch('/api/contact-message', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ fullName, email, phone, subject, message })
+            });
+            const data = await res.json();
+            if (res.ok && data.success) {
+              showToast('Gửi tin nhắn liên hệ thành công! Showroom sẽ sớm phản hồi.', 'success');
+              form.reset();
+            } else {
+              showToast(data.message || 'Lỗi gửi tin nhắn.', 'error');
+            }
+          } catch (err) {
+            showToast('Lỗi kết nối máy chủ.', 'error');
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

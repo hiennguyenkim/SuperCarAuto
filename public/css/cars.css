@@ -1,0 +1,598 @@
+/* Catalog Layout */
+.catalog-section {
+  padding-top: 140px;
+}
+
+.catalog-layout {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 40px;
+  margin-top: 40px;
+}
+
+/* Sidebar filter */
+.filter-sidebar {
+  background: var(--bg-secondary);
+  border: var(--glass-border);
+  padding: 30px;
+  border-radius: 4px;
+  height: fit-content;
+  position: sticky;
+  top: 100px;
+}
+
+.filter-group {
+  margin-bottom: 30px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding-bottom: 25px;
+}
+
+.filter-group:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.filter-group h4 {
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 20px;
+}
+
+.checkbox-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  user-select: none;
+  font-size: 0.85rem;
+  color: var(--color-silver);
+}
+
+.checkbox-item input {
+  accent-color: var(--color-gold);
+}
+
+.checkbox-item input:checked + span {
+  color: var(--color-gold);
+}
+
+.price-inputs {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.price-inputs input {
+  width: 100%;
+  background: var(--bg-input);
+  border: 1px solid var(--color-light-gray);
+  color: var(--color-white);
+  padding: 10px;
+  font-size: 0.8rem;
+  border-radius: 4px;
+}
+
+/* Cars Grid */
+.cars-grid-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.cars-count {
+  font-size: 0.9rem;
+  color: var(--color-silver);
+}
+
+.sort-select select {
+  background: var(--bg-secondary);
+  border: var(--glass-border);
+  color: var(--color-white);
+  padding: 10px 20px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.cars-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 30px;
+}
+
+/* Car Card */
+.car-card {
+  background: var(--bg-secondary);
+  border: var(--glass-border);
+  border-radius: 4px;
+  overflow: hidden;
+  transition: var(--transition-smooth);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+}
+
+.car-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  border-color: var(--color-gold);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+}
+
+.car-card-img {
+  position: relative;
+  padding-top: 60%; /* 5:3 Aspect ratio */
+  overflow: hidden;
+}
+
+.car-card-img img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.car-card:hover .car-card-img img {
+  transform: scale(1.08);
+}
+
+.car-badge {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  z-index: 2;
+  padding: 5px 12px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-radius: 20px;
+  background: var(--bg-primary);
+  border: 1px solid var(--color-gold);
+  color: var(--color-gold);
+}
+
+.car-badge.reserved {
+  background: #7c5d0f;
+  color: var(--color-white);
+  border-color: #7c5d0f;
+}
+
+.car-badge.sold {
+  background: #d90429;
+  color: var(--color-white);
+  border-color: #d90429;
+}
+
+.car-wishlist-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  z-index: 2;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.6);
+  border: var(--glass-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--color-white);
+  transition: var(--transition-fast);
+}
+
+.car-wishlist-btn:hover {
+  color: var(--color-gold);
+  transform: scale(1.1);
+}
+
+.car-wishlist-btn.active {
+  color: var(--color-gold);
+  background: var(--bg-primary);
+  border-color: var(--color-gold);
+}
+
+.car-card-body {
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.car-card-brand {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: var(--color-gold);
+  letter-spacing: 2px;
+  margin-bottom: 5px;
+}
+
+.car-card-title {
+  font-size: 1.2rem;
+  margin-bottom: 15px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.car-card-specs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 10px;
+  margin-bottom: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 15px 0;
+}
+
+.car-card-spec-item {
+  font-size: 0.8rem;
+  color: var(--color-silver);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.car-card-spec-item i {
+  color: var(--color-gold);
+  width: 14px;
+  text-align: center;
+}
+
+.car-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+}
+
+.car-card-price {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--color-white);
+}
+
+.car-card-price span {
+  font-size: 0.75rem;
+  color: var(--color-silver);
+  font-weight: 400;
+}
+
+.car-card-link {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: var(--color-gold);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.car-card-link:hover {
+  color: var(--color-white);
+}
+
+/* PAGINATION */
+.pagination-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 50px;
+  gap: 10px;
+}
+
+.page-btn {
+  background: var(--bg-secondary);
+  border: var(--glass-border);
+  color: var(--color-white);
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--transition-fast);
+  border-radius: 4px;
+}
+
+.page-btn:hover,
+.page-btn.active {
+  background: var(--color-gold);
+  color: var(--bg-primary);
+  border-color: var(--color-gold);
+}
+
+/* CAR DETAIL LAYOUT */
+.car-detail-section {
+  padding-top: 130px;
+}
+
+.car-gallery-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+.gallery-main {
+  position: relative;
+  padding-top: 56.25%; /* 16:9 Aspect ratio */
+  border-radius: 4px;
+  overflow: hidden;
+  border: var(--glass-border);
+}
+
+.gallery-main img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.gallery-thumbs {
+  display: grid;
+  grid-template-rows: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.gallery-thumb-item {
+  position: relative;
+  border-radius: 4px;
+  overflow: hidden;
+  border: var(--glass-border);
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.gallery-thumb-item img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.gallery-thumb-item:hover {
+  border-color: var(--color-gold);
+  opacity: 0.8;
+}
+
+.car-detail-main {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 50px;
+}
+
+.car-info-content h1 {
+  font-size: 3rem;
+  line-height: 1.1;
+  margin-bottom: 10px;
+}
+
+.car-info-meta {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.car-info-meta .brand {
+  font-size: 0.9rem;
+  color: var(--color-gold);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-weight: 600;
+}
+
+.car-info-meta .code {
+  font-size: 0.85rem;
+  color: var(--color-silver);
+  background: var(--bg-card);
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+
+.car-desc {
+  color: var(--color-silver);
+  font-size: 1rem;
+  margin-bottom: 50px;
+  padding-bottom: 30px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+/* Specs Tech Grid */
+.specs-heading {
+  font-size: 1.8rem;
+  margin-bottom: 30px;
+}
+
+.specs-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px 40px;
+  margin-bottom: 50px;
+}
+
+.spec-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+  font-size: 0.9rem;
+}
+
+.spec-item span:first-child {
+  color: var(--color-silver);
+}
+
+.spec-item span:last-child {
+  color: var(--color-white);
+  font-weight: 500;
+}
+
+/* CTA Sidebar widget */
+.car-cta-box {
+  background: var(--bg-secondary);
+  border: var(--glass-border);
+  padding: 40px 30px;
+  border-radius: 4px;
+  position: sticky;
+  top: 100px;
+  height: fit-content;
+  text-align: center;
+}
+
+.cta-price-tag {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--color-white);
+  margin-bottom: 5px;
+}
+
+.cta-old-price {
+  font-size: 1.1rem;
+  color: var(--color-silver);
+  text-decoration: line-through;
+  margin-bottom: 25px;
+}
+
+.cta-deposit-notice {
+  font-size: 0.85rem;
+  color: var(--color-silver);
+  background: rgba(201, 168, 76, 0.05);
+  border: 1px dashed var(--color-gold);
+  padding: 15px;
+  margin-bottom: 30px;
+  border-radius: 4px;
+}
+
+.cta-deposit-notice strong {
+  color: var(--color-gold);
+}
+
+.cta-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.cta-buttons button,
+.cta-buttons a {
+  width: 100%;
+  display: block;
+  text-align: center;
+}
+
+/* Compare Page styling */
+.compare-container {
+  padding-top: 140px;
+}
+
+.compare-selector-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-bottom: 50px;
+}
+
+.compare-select-box {
+  background: var(--bg-secondary);
+  border: var(--glass-border);
+  padding: 20px;
+  text-align: center;
+  border-radius: 4px;
+  height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.compare-select-box:hover {
+  border-color: var(--color-gold);
+}
+
+.compare-select-box select {
+  width: 100%;
+  background: var(--bg-primary);
+  border: var(--glass-border);
+  color: var(--color-white);
+  padding: 10px;
+  border-radius: 4px;
+}
+
+.compare-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 30px;
+  background: var(--bg-secondary);
+  border: var(--glass-border);
+}
+
+.compare-table th, 
+.compare-table td {
+  padding: 20px;
+  border: 1px solid rgba(255,255,255,0.05);
+  text-align: center;
+}
+
+.compare-table td:first-child {
+  font-weight: 600;
+  text-align: left;
+  background: rgba(255,255,255,0.01);
+  color: var(--color-gold);
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 1.5px;
+  width: 250px;
+}
+
+.compare-table th {
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--color-white);
+}
+
+.compare-car-thumb {
+  width: 120px;
+  height: 80px;
+  object-fit: cover;
+  margin-bottom: 10px;
+  border-radius: 4px;
+}
+
+.compare-car-title {
+  font-size: 1.1rem;
+  margin-bottom: 5px;
+}
+
+.compare-remove-btn {
+  color: #d90429;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 0.8rem;
+  margin-top: 10px;
+}
+
+.compare-remove-btn:hover {
+  text-decoration: underline;
+}

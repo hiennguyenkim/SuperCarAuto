@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chi Tiết Xe — SuperCar Luxury</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/public/css/style.css">
+  <link rel="stylesheet" href="/public/css/cars.css">
+  <link rel="stylesheet" href="/public/css/responsive.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="nav-container">
+      <a href="/" class="logo">
+        <span class="logo-text">SUPERCAR<span>LUXURY</span></span>
+      </a>
+      <nav>
+        <ul class="nav-menu">
+          <li class="nav-item"><a href="/">Trang Chủ</a></li>
+          <li class="nav-item active"><a href="/views/cars.html">Bộ Sưu Tập Xe</a></li>
+          <li class="nav-item"><a href="/views/compare.html">So Sánh</a></li>
+          <li class="nav-item"><a href="/views/finance.html">Trả Góp</a></li>
+          <li class="nav-item"><a href="/views/consignment.html">Ký Gửi</a></li>
+          <li class="nav-item"><a href="/views/contact.html">Liên Hệ</a></li>
+        </ul>
+      </nav>
+      <div class="nav-buttons" id="nav-auth-buttons">
+        <!-- Loaded dynamically -->
+      </div>
+    </div>
+  </header>
+
+  <!-- Car Detail Section -->
+  <main class="container car-detail-section section-padding">
+    <!-- Gallery -->
+    <div class="car-gallery-grid">
+      <div class="gallery-main" id="car-gallery-main">
+        <div style="padding: 100px; text-align: center; color: var(--color-silver);">Đang tải ảnh xe...</div>
+      </div>
+      <div class="gallery-thumbs" id="car-gallery-thumbs">
+        <!-- Loaded dynamically -->
+      </div>
+    </div>
+
+    <!-- Main specs & CTA booking panel -->
+    <div class="car-detail-layout">
+      <div class="car-info-content">
+        <div class="car-info-meta">
+          <span class="brand" id="car-brand-name">Hãng Xe</span>
+          <span class="code" id="car-code">Mã Xe: ...</span>
+        </div>
+        <h1 id="car-title">Tên Siêu Xe</h1>
+        
+        <p class="car-desc" id="car-description">
+          Thông tin chi tiết về xe đang được tải...
+        </p>
+
+        <!-- Tech Specifications Grid -->
+        <h3 class="specs-heading">Thông Số Kỹ Thuật</h3>
+        <div class="specs-grid" id="car-specs-grid">
+          <!-- Loaded dynamically from car-detail.js -->
+        </div>
+
+        <!-- Related products -->
+        <h3 class="specs-heading" style="margin-top: 60px;">Sản Phẩm Tương Tự</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px;" id="related-cars-grid">
+          <!-- Loaded dynamically -->
+        </div>
+      </div>
+
+      <!-- Action Panel Sidebar -->
+      <aside>
+        <div class="car-cta-box">
+          <div class="cta-price-tag" id="cta-price">0 ₫</div>
+          <div class="cta-old-price" id="cta-old-price" style="display: none;">0 ₫</div>
+
+          <!-- Availability notices -->
+          <div class="cta-deposit-notice" id="availability-notice-box" style="display: none;"></div>
+
+          <div class="cta-deposit-notice">
+            Số tiền đặt cọc giữ xe:<br>
+            <strong style="font-size: 1.25rem;" id="cta-deposit-amount">0 ₫</strong>
+            <br><small style="color: var(--color-silver);">Thời gian giữ xe cọc mặc định là 7 ngày.</small>
+          </div>
+
+          <div class="cta-buttons">
+            <a href="#" class="btn-gold" id="btn-book-deposit">Đặt Cọc Giữ Xe</a>
+            <a href="#" class="btn-outline" id="btn-book-testdrive">Đặt Lịch Lái Thử</a>
+            <a href="#" class="btn-dark" id="btn-book-appointment">Hẹn Xem Xe Tại Showroom</a>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-container">
+      <div class="footer-logo-desc">
+        <span class="logo-text">SUPERCAR<span>LUXURY</span></span>
+        <p>Hệ thống showroom chuyên phân phối các mẫu siêu xe, xe sang, hypercar chính hãng hàng đầu tại Việt Nam.</p>
+      </div>
+      <div class="footer-section">
+        <h3>Showroom</h3>
+        <ul class="footer-links">
+          <li><a href="/views/cars.html">Mua Xe</a></li>
+          <li><a href="/views/consignment.html">Ký Gửi Siêu Xe</a></li>
+          <li><a href="/views/finance.html">Trả Góp Tài Chính</a></li>
+          <li><a href="/views/contact.html">Liên Hệ Hỗ Trợ</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>Điều Khoản</h3>
+        <ul class="footer-links">
+          <li><a href="/views/policy.html">Chính Sách Bảo Mật</a></li>
+          <li><a href="/views/policy.html">Điều Khoản Đặt Cọc</a></li>
+          <li><a href="/views/faq.html">Câu Hỏi Thường Gặp</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>Thông Tin Liên Hệ</h3>
+        <ul class="footer-contact-info">
+          <li><i class="fas fa-map-marker-alt"></i> 88 Lê Văn Lương, Thanh Xuân, Hà Nội</li>
+          <li><i class="fas fa-phone"></i> Hotline: 1900 8888</li>
+          <li><i class="fas fa-envelope"></i> Email: info@supercarluxury.vn</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 SuperCar Luxury. All Rights Reserved.</p>
+    </div>
+  </footer>
+
+  <script src="/public/js/toast.js"></script>
+  <script src="/public/js/main.js"></script>
+  <script src="/public/js/car-detail.js"></script>
+</body>
+</html>

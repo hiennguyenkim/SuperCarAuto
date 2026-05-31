@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đăng Nhập — SuperCar Luxury</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/public/css/style.css">
+  <link rel="stylesheet" href="/public/css/auth.css">
+  <link rel="stylesheet" href="/public/css/responsive.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="nav-container">
+      <a href="/" class="logo">
+        <span class="logo-text">SUPERCAR<span>LUXURY</span></span>
+      </a>
+      <div class="nav-buttons">
+        <a href="/" class="btn-dark" style="padding: 10px 20px; font-size: 0.75rem;"><i class="fas fa-arrow-left"></i> Quay Lại</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Login Area -->
+  <div class="auth-wrapper">
+    <div class="auth-container">
+      <div class="auth-header">
+        <h2>Đăng Nhập</h2>
+        <p>Truy cập vào hệ thống tài khoản cá nhân của bạn</p>
+      </div>
+      <form id="login-form">
+        <div class="form-group">
+          <label for="usernameOrEmail">Tên đăng nhập hoặc Email</label>
+          <input type="text" id="usernameOrEmail" class="form-control" placeholder="Nhập username hoặc email..." required>
+        </div>
+        <div class="form-group">
+          <label for="password">Mật Khẩu</label>
+          <a href="/views/forgot-password.html" class="forgot-link">Quên mật khẩu?</a>
+          <input type="password" id="password" class="form-control" placeholder="Nhập mật khẩu..." required>
+        </div>
+        <button type="submit" class="btn-gold auth-btn">Đăng Nhập</button>
+      </form>
+      <div style="text-align: center; margin-top: 30px; font-size: 0.85rem; color: var(--color-silver);">
+        Chưa có tài khoản? <a href="/views/register.html" style="color: var(--color-gold); font-weight: 600;">Đăng ký ngay</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="/public/js/toast.js"></script>
+  <script src="/public/js/main.js"></script>
+  <script src="/public/js/auth.js"></script>
+</body>
+</html>
