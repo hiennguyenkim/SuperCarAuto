@@ -5,6 +5,7 @@ const API_URL = '';
 document.addEventListener('DOMContentLoaded', () => {
   checkUserSession();
   setupHeaderScroll();
+  initChatWidget();
 });
 
 // Setup sticky header scroll effects
@@ -181,4 +182,400 @@ function formatCurrencyVND(amount) {
     style: 'currency',
     currency: 'VND'
   }).format(amount);
+}
+
+// Floating Client-side CSKH Live Chat Widget
+function initChatWidget() {
+  // Do not show chat widget on admin or staff dashboards
+  const path = window.location.pathname;
+  if (path.includes('admin-dashboard') || path.includes('staff-dashboard')) {
+    return;
+  }
+
+  // Create stylesheet for widget
+  const style = document.createElement('style');
+  style.textContent = `
+    .chat-widget-btn {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: var(--color-gold, #dec171);
+      color: #000;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), 0 0 10px rgba(222, 193, 113, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      cursor: pointer;
+      z-index: 9999;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .chat-widget-btn:hover {
+      transform: scale(1.08) translateY(-3px);
+      box-shadow: 0 6px 25px rgba(222, 193, 113, 0.4);
+    }
+    .chat-widget-popup {
+      position: fixed;
+      bottom: 100px;
+      right: 30px;
+      width: 360px;
+      height: 500px;
+      background: #161616;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+      z-index: 9999;
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+      font-family: var(--font-body), system-ui, -apple-system, sans-serif;
+    }
+    .chat-widget-header {
+      background: #0f0f0f;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .chat-widget-header h3 {
+      margin: 0;
+      font-size: 0.95rem;
+      color: var(--color-gold, #dec171);
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .chat-widget-close {
+      background: none;
+      border: none;
+      color: #999;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+    .chat-widget-close:hover {
+      color: #fff;
+    }
+    .chat-widget-body {
+      flex: 1;
+      overflow-y: auto;
+      background: #0d0d0d;
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .chat-widget-message {
+      max-width: 80%;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 0.8rem;
+      line-height: 1.4;
+      word-break: break-word;
+    }
+    .chat-widget-message.incoming {
+      align-self: flex-start;
+      background: #222;
+      color: #eee;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-bottom-left-radius: 2px;
+    }
+    .chat-widget-message.outgoing {
+      align-self: flex-end;
+      background: var(--color-gold, #dec171);
+      color: #000;
+      border-bottom-right-radius: 2px;
+      font-weight: 500;
+    }
+    .chat-widget-footer {
+      padding: 12px;
+      background: #161616;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      gap: 8px;
+    }
+    .chat-widget-input {
+      flex: 1;
+      padding: 8px 12px;
+      background: #222;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 6px;
+      color: #fff;
+      font-size: 0.85rem;
+    }
+    .chat-widget-input:focus {
+      border-color: var(--color-gold, #dec171);
+      outline: none;
+    }
+    .chat-widget-send {
+      background: var(--color-gold, #dec171);
+      border: none;
+      color: #000;
+      padding: 8px 15px;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+    .chat-widget-form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 10px 5px;
+    }
+    .chat-widget-form label {
+      font-size: 0.75rem;
+      color: #aaa;
+      margin-bottom: 4px;
+    }
+    .chat-widget-form input, .chat-widget-form textarea {
+      width: 100%;
+      padding: 8px 12px;
+      background: #222;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 6px;
+      color: #fff;
+      font-size: 0.8rem;
+    }
+    .chat-widget-form input:focus, .chat-widget-form textarea:focus {
+      border-color: var(--color-gold, #dec171);
+      outline: none;
+    }
+    .chat-widget-form button {
+      background: var(--color-gold, #dec171);
+      color: #000;
+      border: none;
+      padding: 10px;
+      border-radius: 6px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 10px;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+  `;
+  document.head.appendChild(style);
+
+  // Create Widget Button
+  const btn = document.createElement('div');
+  btn.className = 'chat-widget-btn';
+  btn.innerHTML = '<i class="fab fa-facebook-messenger"></i>';
+  document.body.appendChild(btn);
+
+  // Create Widget Popup
+  const popup = document.createElement('div');
+  popup.className = 'chat-widget-popup';
+  popup.innerHTML = `
+    <div class="chat-widget-header">
+      <h3><i class="fab fa-facebook-messenger"></i> Hỗ Trợ Trực Tuyến</h3>
+      <button class="chat-widget-close"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="chat-widget-body" id="chat-widget-body">
+      <!-- Content loaded dynamically -->
+    </div>
+    <div class="chat-widget-footer" id="chat-widget-footer">
+      <input type="text" class="chat-widget-input" id="chat-widget-input" placeholder="Nhập tin nhắn của bạn...">
+      <button class="chat-widget-send" id="chat-widget-send">Gửi</button>
+    </div>
+  `;
+  document.body.appendChild(popup);
+
+  const body = popup.querySelector('#chat-widget-body');
+  const footer = popup.querySelector('#chat-widget-footer');
+  const input = popup.querySelector('#chat-widget-input');
+  const sendBtn = popup.querySelector('#chat-widget-send');
+  const closeBtn = popup.querySelector('.chat-widget-close');
+
+  let pollInterval = null;
+  let currentThreadId = localStorage.getItem('supercar_chat_thread_id');
+
+  // Toggle Popup
+  btn.addEventListener('click', () => {
+    const isOpen = popup.style.display === 'flex';
+    popup.style.display = isOpen ? 'none' : 'flex';
+    if (!isOpen) {
+      loadChatWidgetView();
+      startPolling();
+    } else {
+      stopPolling();
+    }
+  });
+
+  // Close Popup
+  closeBtn.addEventListener('click', () => {
+    popup.style.display = 'none';
+    stopPolling();
+  });
+
+  function startPolling() {
+    stopPolling();
+    if (currentThreadId) {
+      pollInterval = setInterval(fetchChatHistory, 5000);
+    }
+  }
+
+  function stopPolling() {
+    if (pollInterval) {
+      clearInterval(pollInterval);
+      pollInterval = null;
+    }
+  }
+
+  async function loadChatWidgetView() {
+    currentThreadId = localStorage.getItem('supercar_chat_thread_id');
+    footer.style.display = 'flex';
+    if (currentThreadId) {
+      await fetchChatHistory();
+    } else {
+      renderWelcomeView();
+    }
+  }
+
+  function renderWelcomeView() {
+    body.innerHTML = `
+      <div style="text-align: center; color: #888; font-size: 0.8rem; padding: 20px 10px; margin-top: 50px;">
+        <i class="fab fa-facebook-messenger" style="font-size: 2.5rem; color: var(--color-gold, #dec171); margin-bottom: 15px; display: block;"></i>
+        Chào mừng quý khách đến với <strong>SuperCar Luxury</strong>!<br><br>
+        Vui lòng nhập tin nhắn bên dưới để bắt đầu cuộc trò chuyện với tư vấn viên của chúng tôi.
+      </div>
+    `;
+  }
+
+  async function fetchChatHistory() {
+    if (!currentThreadId) return;
+    try {
+      const res = await fetch(`/api/contact-message/thread/${currentThreadId}`);
+      const data = await res.json();
+      if (data.success && data.data) {
+        renderChatMessages(data.data.messages || []);
+      }
+    } catch (err) {
+      console.error('Failed to poll chat:', err);
+    }
+  }
+
+  function renderChatMessages(messages) {
+    const oldScrollHeight = body.scrollHeight;
+    body.innerHTML = '';
+    
+    if (messages.length === 0) {
+      body.innerHTML = '<p style="text-align: center; color: #666; font-size: 0.8rem; margin-top: 50px;">Không có tin nhắn nào.</p>';
+      return;
+    }
+
+    messages.forEach(msg => {
+      const isOut = msg.sender === 'user';
+      const msgEl = document.createElement('div');
+      msgEl.className = `chat-widget-message ${isOut ? 'outgoing' : 'incoming'}`;
+      
+      let senderPrefix = '';
+      if (!isOut) {
+        senderPrefix = `<div style="font-size: 0.65rem; color: var(--color-gold); font-weight: bold; margin-bottom: 2px;">${msg.senderName} (${msg.sender === 'admin' ? 'Admin' : 'Staff'})</div>`;
+      }
+      
+      const timeStr = new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      msgEl.innerHTML = `
+        ${senderPrefix}
+        <div>${escapeHtml(msg.content)}</div>
+        <div style="font-size: 0.6rem; opacity: 0.5; text-align: right; margin-top: 4px;">${timeStr}</div>
+      `;
+      body.appendChild(msgEl);
+    });
+
+    if (body.scrollHeight > oldScrollHeight) {
+      body.scrollTop = body.scrollHeight;
+    }
+  }
+
+  async function sendMessage() {
+    const text = input.value.trim();
+    if (!text) return;
+
+    input.value = '';
+    try {
+      let payload = {};
+      if (currentThreadId) {
+        payload = { threadId: currentThreadId, message: text };
+      } else {
+        // Automatically fetch or generate user/guest profile info
+        let userInfo = null;
+        try {
+          const authRes = await fetch('/api/auth/me');
+          const authData = await authRes.json();
+          if (authData.success && authData.user) {
+            userInfo = {
+              fullName: authData.user.fullName,
+              email: authData.user.email,
+              phone: authData.user.phone || ''
+            };
+          }
+        } catch (e) {
+          console.error('Failed to fetch user session:', e);
+        }
+
+        if (!userInfo) {
+          // Fallback to guest info
+          let guestName = localStorage.getItem('supercar_chat_guest_name');
+          let guestEmail = localStorage.getItem('supercar_chat_guest_email');
+          if (!guestName || !guestEmail) {
+            const randId = Math.floor(1000 + Math.random() * 9000);
+            guestName = `Khách hàng #${randId}`;
+            guestEmail = `guest_${randId}@supercar.com`;
+            localStorage.setItem('supercar_chat_guest_name', guestName);
+            localStorage.setItem('supercar_chat_guest_email', guestEmail);
+          }
+          userInfo = {
+            fullName: guestName,
+            email: guestEmail,
+            phone: ''
+          };
+        }
+
+        payload = {
+          fullName: userInfo.fullName,
+          email: userInfo.email,
+          phone: userInfo.phone,
+          message: text
+        };
+      }
+
+      const res = await fetch('/api/contact-message/support', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (data.success && data.data) {
+        currentThreadId = data.data._id;
+        localStorage.setItem('supercar_chat_thread_id', currentThreadId);
+        renderChatMessages(data.data.messages || []);
+        body.scrollTop = body.scrollHeight;
+        startPolling();
+      }
+    } catch (err) {
+      console.error('Failed to send message:', err);
+    }
+  }
+
+  sendBtn.addEventListener('click', sendMessage);
+  input.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+      sendMessage();
+    }
+  });
+
+  function escapeHtml(unsafe) {
+    return unsafe
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
 }

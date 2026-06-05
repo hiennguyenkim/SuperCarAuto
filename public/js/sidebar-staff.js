@@ -19,8 +19,7 @@ function renderSidebar() {
         <li class="dashboard-menu-item" data-tab="tab-manual-order"><i class="fas fa-plus-circle"></i> Tạo đơn thủ công</li>
         <li class="dashboard-menu-item" data-tab="tab-orders" data-sub="handover"><i class="fas fa-truck-loading"></i> Bàn giao xe</li>
         <li class="dashboard-menu-item" data-tab="tab-deposits" data-sub="payment"><i class="fas fa-wallet"></i> Xác nhận thanh toán</li>
-        <li class="dashboard-menu-item" data-tab="tab-contacts"><i class="fas fa-users"></i> Quản lý khách hàng</li>
-        <li class="dashboard-menu-item" data-tab="tab-chat"><i class="fas fa-comments"></i> Chat CSKH</li>
+        <li class="dashboard-menu-item" data-tab="tab-contacts"><i class="fas fa-envelope"></i> Quản lý liên hệ & CSKH</li>
         <li class="dashboard-menu-item" data-tab="tab-change-password"><i class="fas fa-key"></i> Đổi mật khẩu</li>
       </ul>
 

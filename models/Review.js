@@ -8,7 +8,10 @@ const ReviewSchema = new mongoose.Schema({
   rating: { type: Number, required: true, min: 1, max: 5 },
   comment: { type: String, required: true },
   images: [String],
-  isVisible: { type: Boolean, default: true }
+  isVisible: { type: Boolean, default: true },
+  replyComment: { type: String },
+  repliedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  repliedAt: { type: Date }
 }, {
   timestamps: true
 });

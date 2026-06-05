@@ -1,3 +1,5 @@
+let contactsPollInterval = null;
+
 document.addEventListener('DOMContentLoaded', () => {
   if (typeof renderSidebar === 'function') {
     renderSidebar();
@@ -85,6 +87,11 @@ function setupTabNavigation() {
 }
 
 function loadTabContent(tabId) {
+  if (contactsPollInterval) {
+    clearInterval(contactsPollInterval);
+    contactsPollInterval = null;
+  }
+
   if (tabId === 'tab-overview') {
     fetchOverviewStats();
     initRevenueStats();
@@ -100,6 +107,7 @@ function loadTabContent(tabId) {
     loadManualOrderDropdowns();
   } else if (tabId === 'tab-contacts') {
     fetchContacts();
+    contactsPollInterval = setInterval(() => fetchContacts(true), 5000);
   }
 }
 
@@ -774,71 +782,288 @@ function setupManualOrderForm() {
   });
 }
 
-// 7. Manage Contacts
-async function fetchContacts() {
-  const tbody = document.getElementById('staff-contacts-table-body');
-  if (!tbody) return;
-  tbody.innerHTML = '<tr><td colspan="7" style="text-align: center;">Đang tải tin nhắn...</td></tr>';
+// ================= CONTACTS & CSKH MESSENGER =================
+let currentMessengerStream = 'support';
+let activeThreadId = null;
+let allContactsData = [];
+let messengerEventsBound = false;
+
+window.switchMessengerStream = function(streamType) {
+  currentMessengerStream = streamType;
+  
+  const btnCSKH = document.getElementById('btn-stream-cskh');
+  const btnContact = document.getElementById('btn-stream-contact');
+  
+  if (btnCSKH && btnContact) {
+    if (streamType === 'support') {
+      btnCSKH.classList.add('active');
+      btnContact.classList.remove('active');
+    } else {
+      btnCSKH.classList.remove('active');
+      btnContact.classList.add('active');
+    }
+  }
+  
+  activeThreadId = null;
+  const activeContainer = document.getElementById('chat-active-container');
+  const noThreadContainer = document.getElementById('chat-no-thread');
+  if (activeContainer) activeContainer.style.display = 'none';
+  if (noThreadContainer) noThreadContainer.style.display = 'flex';
+  
+  renderMessengerThreads();
+};
+
+async function fetchContacts(silent = false) {
+  const threadsList = document.getElementById('messenger-threads-list');
+  if (!threadsList) return;
+  
+  if (!silent && allContactsData.length === 0) {
+    threadsList.innerHTML = '<div style="text-align: center; color: #888; padding: 20px;">Đang tải hội thoại...</div>';
+  }
 
   try {
     const res = await fetch('/api/contact-message');
     const data = await res.json();
 
     if (data.success) {
-      if (data.data.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center;">Không có tin nhắn liên hệ mới.</td></tr>';
-        return;
+      allContactsData = data.data;
+      renderMessengerThreads();
+      
+      if (activeThreadId) {
+        const activeThread = allContactsData.find(t => t._id === activeThreadId);
+        if (activeThread) {
+          renderActiveThreadDetails(activeThread);
+        }
       }
-
-      let html = '';
-      data.data.forEach(msg => {
-        const carName = msg.relatedCar ? msg.relatedCar.name : '—';
-        const dateStr = new Date(msg.createdAt).toLocaleDateString('vi-VN');
-        
-        let actions = `
-          <div class="action-btn-group">
-            <button class="action-btn" onclick="updateContactStatus('${msg._id}', 'processing')" title="Nhận xử lý"><i class="fas fa-hourglass-half"></i></button>
-            <button class="action-btn" onclick="updateContactStatus('${msg._id}', 'done')" title="Đã giải quyết"><i class="fas fa-check-double"></i></button>
-          </div>
-        `;
-
-        html += `
-          <tr>
-            <td>${msg.fullName} <br><small>${msg.phone}</small> <br><small>${msg.email}</small></td>
-            <td>${msg.subject || '—'}</td>
-            <td>${msg.message}</td>
-            <td>${carName}</td>
-            <td><span class="badge-status ${msg.status}">${msg.status}</span></td>
-            <td><input type="text" id="msgnote-${msg._id}" value="${msg.staffNote || ''}" style="width: 100%; background: #222; border: 1px solid #444; color: #fff; padding: 5px;"></td>
-            <td>${actions}</td>
-          </tr>
-        `;
-      });
-      tbody.innerHTML = html;
     }
   } catch (err) {
-    tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: #d90429;">Lỗi tải tin nhắn.</td></tr>';
+    console.error('Lỗi tải tin nhắn:', err);
+    if (!silent) {
+      threadsList.innerHTML = '<div style="text-align: center; color: #d90429; padding: 20px;">Lỗi tải dữ liệu.</div>';
+    }
   }
 }
 
-window.updateContactStatus = async function(msgId, status) {
-  const note = document.getElementById(`msgnote-${msgId}`).value;
-  try {
-    const res = await fetch(`/api/contact-message/${msgId}/status`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ status, staffNote: note })
-    });
-    if (res.ok) {
-      showToast('Cập nhật trạng thái liên hệ thành công!', 'success');
-      fetchContacts();
+function renderMessengerThreads() {
+  const threadsList = document.getElementById('messenger-threads-list');
+  if (!threadsList) return;
+
+  const filteredThreads = allContactsData.filter(t => {
+    if (currentMessengerStream === 'support') {
+      return t.type === 'support';
     } else {
-      showToast('Cập nhật thất bại.', 'error');
+      return t.type !== 'support';
     }
-  } catch (e) {
-    showToast('Lỗi máy chủ.', 'error');
+  });
+
+  if (filteredThreads.length === 0) {
+    threadsList.innerHTML = `<div style="text-align: center; color: #555; padding: 30px; font-size: 0.85rem;">Không có cuộc hội thoại nào.</div>`;
+    return;
   }
+
+  let html = '';
+  filteredThreads.forEach(t => {
+    const isActive = t._id === activeThreadId ? 'active' : '';
+    const lastMsg = t.messages && t.messages.length > 0 ? t.messages[t.messages.length - 1].content : t.message;
+    const timeStr = new Date(t.updatedAt || t.createdAt).toLocaleDateString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+    const isNew = t.status === 'new' ? '<span class="thread-status-dot new"></span>' : '';
+    
+    html += `
+      <div class="thread-item ${isActive}" onclick="selectMessengerThread('${t._id}')">
+        <div class="thread-item-header">
+          <span class="thread-name">${escapeHtml(t.fullName)}</span>
+          <span class="thread-time">${timeStr}</span>
+        </div>
+        <div class="thread-preview">${escapeHtml(lastMsg)}</div>
+        ${isNew}
+      </div>
+    `;
+  });
+  threadsList.innerHTML = html;
+}
+
+window.selectMessengerThread = function(threadId) {
+  activeThreadId = threadId;
+  
+  const items = document.querySelectorAll('.thread-item');
+  items.forEach(el => el.classList.remove('active'));
+  
+  const thread = allContactsData.find(t => t._id === threadId);
+  if (!thread) return;
+  
+  renderMessengerThreads();
+
+  const noThread = document.getElementById('chat-no-thread');
+  const activeContainer = document.getElementById('chat-active-container');
+  if (noThread) noThread.style.display = 'none';
+  if (activeContainer) activeContainer.style.display = 'flex';
+
+  document.getElementById('chat-header-name').textContent = thread.fullName;
+  document.getElementById('chat-header-meta').textContent = `Email: ${thread.email} | SĐT: ${thread.phone || '—'}`;
+  
+  document.getElementById('chat-status-select').value = thread.status;
+  document.getElementById('chat-staff-note').value = thread.staffNote || '';
+
+  const carInfo = document.getElementById('chat-car-info');
+  const carName = document.getElementById('chat-car-name');
+  if (thread.relatedCar) {
+    carInfo.style.display = 'block';
+    carName.textContent = `${thread.relatedCar.name} (${thread.relatedCar.code})`;
+  } else {
+    carInfo.style.display = 'none';
+  }
+
+  renderActiveThreadDetails(thread);
+  setupMessengerEventsOnce();
 };
+
+function renderActiveThreadDetails(thread) {
+  const container = document.getElementById('chat-messages-container');
+  const inputContainer = document.getElementById('chat-input-container');
+  const contactContainer = document.getElementById('contact-view-container');
+
+  if (currentMessengerStream === 'support') {
+    if (inputContainer) inputContainer.style.display = 'flex';
+    if (contactContainer) contactContainer.style.display = 'none';
+    
+    let messagesHtml = '';
+    const messages = thread.messages || [];
+    
+    if (messages.length === 0) {
+      messagesHtml = '<p style="text-align: center; color: #555; font-size: 0.8rem; margin-top: 30px;">Chưa có tin nhắn nào trong phòng chat.</p>';
+    } else {
+      messages.forEach(msg => {
+        const isIncoming = msg.sender === 'user';
+        const senderLabel = isIncoming ? msg.senderName : `${msg.senderName} (${msg.sender === 'admin' ? 'Admin' : 'Staff'})`;
+        const timeStr = new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        
+        messagesHtml += `
+          <div class="chat-message ${isIncoming ? 'incoming' : 'outgoing'}">
+            <span class="chat-message-sender">${escapeHtml(senderLabel)}</span>
+            <span>${escapeHtml(msg.content)}</span>
+            <span class="chat-message-time">${timeStr}</span>
+          </div>
+        `;
+      });
+    }
+    container.innerHTML = messagesHtml;
+    container.scrollTop = container.scrollHeight;
+  } else {
+    if (inputContainer) inputContainer.style.display = 'none';
+    if (contactContainer) contactContainer.style.display = 'flex';
+    
+    document.getElementById('contact-subject').textContent = thread.subject || 'Liên Hệ & Tư Vấn';
+    document.getElementById('contact-initial-message').textContent = thread.message;
+
+    const timeStr = new Date(thread.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    container.innerHTML = `
+      <div class="chat-message incoming" style="max-width: 90%;">
+        <span class="chat-message-sender">${escapeHtml(thread.fullName)}</span>
+        <div style="font-weight: 600; margin-bottom: 5px; color: var(--color-gold);">${escapeHtml(thread.subject || 'Chủ đề: —')}</div>
+        <div>${escapeHtml(thread.message)}</div>
+        <span class="chat-message-time">${timeStr}</span>
+      </div>
+    `;
+  }
+}
+
+function setupMessengerEventsOnce() {
+  if (messengerEventsBound) return;
+  messengerEventsBound = true;
+
+  const saveStatusBtn = document.getElementById('btn-save-chat-status');
+  if (saveStatusBtn) {
+    saveStatusBtn.addEventListener('click', async () => {
+      if (!activeThreadId) return;
+      const status = document.getElementById('chat-status-select').value;
+      const note = document.getElementById('chat-staff-note').value;
+      try {
+        const res = await fetch(`/api/contact-message/${activeThreadId}/status`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status, staffNote: note })
+        });
+        if (res.ok) {
+          showToast('Đã lưu trạng thái cuộc trò chuyện!', 'success');
+          fetchContacts(true);
+        } else {
+          showToast('Cập nhật thất bại.', 'error');
+        }
+      } catch (err) {
+        showToast('Lỗi kết nối máy chủ.', 'error');
+      }
+    });
+  }
+
+  const saveNoteBtn = document.getElementById('btn-save-staff-note');
+  if (saveNoteBtn) {
+    saveNoteBtn.addEventListener('click', async () => {
+      if (!activeThreadId) return;
+      const status = document.getElementById('chat-status-select').value;
+      const note = document.getElementById('chat-staff-note').value;
+      try {
+        const res = await fetch(`/api/contact-message/${activeThreadId}/status`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status, staffNote: note })
+        });
+        if (res.ok) {
+          showToast('Đã lưu ghi chú nội bộ!', 'success');
+          fetchContacts(true);
+        } else {
+          showToast('Cập nhật ghi chú thất bại.', 'error');
+        }
+      } catch (err) {
+        showToast('Lỗi kết nối máy chủ.', 'error');
+      }
+    });
+  }
+
+  const sendReplyBtn = document.getElementById('btn-send-chat-reply');
+  const chatInput = document.getElementById('chat-input-message');
+  
+  const submitReply = async () => {
+    if (!activeThreadId) return;
+    const text = chatInput.value.trim();
+    if (!text) return;
+    
+    chatInput.value = '';
+    try {
+      const res = await fetch(`/api/contact-message/thread/${activeThreadId}/reply`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: text })
+      });
+      const data = await res.json();
+      if (data.success) {
+        await fetchContacts(true);
+      } else {
+        showToast(data.message || 'Lỗi gửi tin nhắn.', 'error');
+      }
+    } catch (err) {
+      showToast('Lỗi gửi tin nhắn.', 'error');
+    }
+  };
+
+  if (sendReplyBtn) sendReplyBtn.addEventListener('click', submitReply);
+  if (chatInput) {
+    chatInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        submitReply();
+      }
+    });
+  }
+}
+
+function escapeHtml(unsafe) {
+  if (!unsafe) return '';
+  return unsafe
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
 
 function setupChangePasswordForm() {
   const form = document.getElementById('staff-change-password-form');

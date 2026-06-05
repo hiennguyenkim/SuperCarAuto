@@ -118,28 +118,87 @@
           </div>
         </div>
 
-        <!-- 2. Contacts Tab -->
+        <!-- 2. Contacts Tab (Messenger Consolidated UI) -->
         <div class="dashboard-content-tab" id="tab-contacts">
           <div class="dashboard-tab-header">
-            <h2>Yêu Cầu Liên Hệ & Tư Vấn Khách Hàng</h2>
+            <h2>Quản Lý Liên Hệ & CSKH</h2>
           </div>
-          <div class="table-responsive">
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>Khách Hàng</th>
-                  <th>Chủ Đề</th>
-                  <th>Nội Dung Chi Tiết</th>
-                  <th>Xe Quan Tâm</th>
-                  <th>Trạng Thái</th>
-                  <th>Ghi Chú Phản Hồi</th>
-                  <th>Thao Tác</th>
-                </tr>
-              </thead>
-              <tbody id="staff-contacts-table-body">
+          
+          <div class="messenger-container">
+            <!-- Left Sidebar: Streams and Threads -->
+            <div class="messenger-sidebar">
+              <div class="messenger-streams">
+                <button type="button" class="stream-btn active" id="btn-stream-cskh" onclick="switchMessengerStream('support')">CSKH Chat</button>
+                <button type="button" class="stream-btn" id="btn-stream-contact" onclick="switchMessengerStream('contact')">Liên Hệ</button>
+              </div>
+              <div class="thread-list" id="messenger-threads-list">
                 <!-- Loaded dynamically -->
-              </tbody>
-            </table>
+              </div>
+            </div>
+
+            <!-- Right Panel: Conversation -->
+            <div class="messenger-chat-area">
+              <!-- No Active Conversation state -->
+              <div id="chat-no-thread" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: #555;">
+                <i class="fab fa-facebook-messenger" style="font-size: 3rem; margin-bottom: 15px; color: var(--color-gold); opacity: 0.4;"></i>
+                <p style="font-size: 0.9rem;">Chọn một cuộc hội thoại hoặc yêu cầu liên hệ từ danh sách</p>
+              </div>
+
+              <!-- Active Conversation state -->
+              <div id="chat-active-container" style="display: none; flex-direction: column; height: 100%;">
+                <!-- Header -->
+                <div class="chat-header">
+                  <div>
+                    <h4 id="chat-header-name" style="margin: 0 0 4px 0; color: #fff; font-size: 1rem;">Họ Tên Khách Hàng</h4>
+                    <span id="chat-header-meta" style="font-size: 0.75rem; color: #888;">Email | SĐT</span>
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 10px;">
+                    <select id="chat-status-select" class="form-control" style="width: auto; padding: 6px 12px; font-size: 0.8rem; background: #222; border: 1px solid rgba(255,255,255,0.1); color: #fff; border-radius: 4px;">
+                      <option value="new">Mới</option>
+                      <option value="processing">Đang xử lý</option>
+                      <option value="done">Hoàn thành</option>
+                      <option value="rejected">Từ chối</option>
+                    </select>
+                    <button type="button" class="btn-gold" id="btn-save-chat-status" style="padding: 6px 15px; font-size: 0.8rem; height: auto; border: none; font-weight: bold; border-radius: 4px; color: #000;">Lưu</button>
+                  </div>
+                </div>
+
+                <!-- Related Car Info bar -->
+                <div id="chat-car-info" style="padding: 8px 20px; background: rgba(222, 193, 113, 0.05); border-bottom: 1px solid rgba(255,255,255,0.03); font-size: 0.8rem; color: #ccc; display: none;">
+                  <span><i class="fas fa-car" style="color: var(--color-gold); margin-right: 5px;"></i> Xe quan tâm: <strong id="chat-car-name" style="color: var(--color-gold);"></strong></span>
+                </div>
+
+                <!-- Messages area -->
+                <div class="chat-messages-body" id="chat-messages-container">
+                  <!-- Loaded dynamically -->
+                </div>
+
+                <!-- Staff Note bar -->
+                <div class="chat-note-section" style="padding: 10px 20px; background: #141414; border-top: 1px solid rgba(255,255,255,0.05); display: flex; gap: 10px; align-items: center;">
+                  <span style="font-size: 0.75rem; color: #888; white-space: nowrap;"><i class="fas fa-pen-fancy" style="margin-right: 4px;"></i> Ghi chú nội bộ:</span>
+                  <input type="text" id="chat-staff-note" placeholder="Thêm ghi chú xử lý của nhân viên..." style="flex: 1; padding: 6px 12px; font-size: 0.8rem; background: #222; border: 1px solid rgba(255,255,255,0.1); color: #fff; border-radius: 4px;">
+                  <button type="button" class="btn-outline" id="btn-save-staff-note" style="padding: 6px 15px; font-size: 0.8rem; height: auto; border-radius: 4px;">Lưu Note</button>
+                </div>
+
+                <!-- CSKH text chat input -->
+                <div class="chat-input-area" id="chat-input-container">
+                  <input type="text" id="chat-input-message" placeholder="Nhập tin nhắn phản hồi..." style="flex: 1; padding: 10px 15px; background: #222; border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color: #fff; font-size: 0.85rem;">
+                  <button type="button" class="btn-gold" id="btn-send-chat-reply" style="padding: 10px 20px; border-radius: 6px; font-weight: bold; color: #000; border: none; cursor: pointer;"><i class="fas fa-paper-plane" style="margin-right: 5px;"></i> Gửi</button>
+                </div>
+
+                <!-- General Contact View Area (No live input, shows detailed contact subject/message) -->
+                <div class="contact-view-area" id="contact-view-container" style="padding: 20px; border-top: 1px solid rgba(255,255,255,0.07); background: #161616; display: none; flex-direction: column; gap: 12px;">
+                  <div style="background: rgba(255,255,255,0.02); padding: 15px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05);">
+                    <h5 style="color: var(--color-gold); margin: 0 0 8px 0; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px;">Chủ đề liên hệ:</h5>
+                    <p id="contact-subject" style="font-size: 0.9rem; font-weight: 600; color: #fff; margin: 0 0 15px 0;"></p>
+                    
+                    <h5 style="color: var(--color-gold); margin: 0 0 8px 0; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px;">Nội dung liên hệ ban đầu:</h5>
+                    <p id="contact-initial-message" style="font-size: 0.9rem; line-height: 1.5; color: #eee; margin: 0; white-space: pre-line;"></p>
+                  </div>
+                </div>
+
+              </div>
+            </div>
           </div>
         </div>
 
@@ -317,23 +376,7 @@
           </div>
         </div>
 
-        <!-- 8. Chat CSKH Tab -->
-        <div class="dashboard-content-tab" id="tab-chat">
-          <div class="dashboard-tab-header">
-            <h2>Kênh Chăm Sóc Khách Hàng (Live Chat)</h2>
-          </div>
-          <div style="background: var(--bg-secondary); border: var(--glass-border); padding: 30px; border-radius: 4px; text-align: center;">
-            <i class="fas fa-comments" style="font-size: 3rem; color: var(--color-gold); margin-bottom: 20px;"></i>
-            <h3 style="margin-bottom: 10px; color: #fff;">Hệ Thống Chat CSKH</h3>
-            <p style="color: var(--color-silver); font-size: 0.9rem; max-width: 500px; margin: 0 auto 20px;">Hệ thống kênh Chat CSKH trực tuyến thời gian thực hiện đang được đồng bộ và nâng cấp. Nhân viên vui lòng kiểm tra hộp thư email hoặc liên hệ Hotline để hỗ trợ gấp khách hàng.</p>
-            <div style="display: flex; justify-content: center; gap: 15px;">
-              <a href="mailto:support@supercarluxury.vn" class="btn-gold" style="padding: 10px 20px; font-size: 0.75rem;"><i class="fas fa-envelope"></i> Gửi Mail Hỗ Trợ</a>
-              <a href="/" class="btn-dark" style="padding: 10px 20px; font-size: 0.75rem;"><i class="fas fa-phone-alt"></i> Gọi Hotline</a>
-            </div>
-          </div>
-        </div>
-
-        <!-- 9. Change Password Tab -->
+         <!-- 9. Change Password Tab -->
         <div class="dashboard-content-tab" id="tab-change-password">
           <div class="dashboard-tab-header">
             <h2>Đổi Mật Khẩu Tài Khoản</h2>

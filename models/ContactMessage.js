@@ -7,6 +7,17 @@ const ContactMessageSchema = new mongoose.Schema({
   subject: String,
   message: { type: String, required: true },
   relatedCar: { type: mongoose.Schema.Types.ObjectId, ref: 'Car' },
+  type: {
+    type: String,
+    enum: ['contact', 'support'],
+    default: 'contact'
+  },
+  messages: [{
+    sender: { type: String, enum: ['user', 'staff', 'admin'], default: 'user' },
+    senderName: { type: String, required: true },
+    content: { type: String, required: true },
+    createdAt: { type: Date, default: Date.now }
+  }],
   status: {
     type: String,
     enum: ['new', 'processing', 'done', 'rejected'],

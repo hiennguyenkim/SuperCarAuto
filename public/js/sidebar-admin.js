@@ -23,7 +23,7 @@ function renderSidebar() {
         <li class="dashboard-menu-item" data-tab="tab-accounts"><i class="fas fa-users-cog"></i> Quản lý tài khoản</li>
         <li class="dashboard-menu-item" data-tab="tab-coupons"><i class="fas fa-percentage"></i> Quản lý mã ưu đãi</li>
         <li class="dashboard-menu-item" data-tab="tab-reviews"><i class="fas fa-star"></i> Quản lý đánh giá</li>
-        <li class="dashboard-menu-item" data-tab="tab-contacts"><i class="fas fa-envelope"></i> Quản lý liên hệ</li>
+        <li class="dashboard-menu-item" data-tab="tab-contacts"><i class="fas fa-envelope"></i> Quản lý liên hệ & CSKH</li>
         <li class="dashboard-menu-item" data-tab="tab-homepage-settings"><i class="fas fa-cogs"></i> Cài đặt trang chủ</li>
         <li class="dashboard-menu-item" data-tab="tab-audit-logs"><i class="fas fa-history"></i> Nhật ký hoạt động</li>
       </ul>

@@ -1,3 +1,5 @@
+let contactsPollInterval = null;
+
 document.addEventListener('DOMContentLoaded', () => {
   if (typeof renderSidebar === 'function') {
     renderSidebar();
@@ -8,6 +10,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // Bind Form submits
   setupCarFormSubmit();
   setupBrandFormSubmit();
+  setupCategoryFormSubmit();
+  setupCollectionFormSubmit();
   setupCouponFormSubmit();
   setupHomepageSettingsForms();
 
@@ -78,16 +82,38 @@ function setupTabNavigation() {
 }
 
 function loadAdminTabContent(tabId) {
+  if (contactsPollInterval) {
+    clearInterval(contactsPollInterval);
+    contactsPollInterval = null;
+  }
+
   if (tabId === 'tab-overview') {
     fetchAdminOverviewStats();
   } else if (tabId === 'tab-cars') {
     fetchAdminCars();
   } else if (tabId === 'tab-brands') {
     fetchAdminBrands();
+  } else if (tabId === 'tab-categories') {
+    fetchAdminCategories();
+  } else if (tabId === 'tab-collections') {
+    fetchAdminCollections();
+  } else if (tabId === 'tab-appointments') {
+    fetchAdminAppointments();
+  } else if (tabId === 'tab-test-drives') {
+    fetchAdminTestDrives();
+  } else if (tabId === 'tab-deposits') {
+    fetchAdminDeposits();
+  } else if (tabId === 'tab-orders') {
+    fetchAdminOrders();
   } else if (tabId === 'tab-coupons') {
     fetchAdminCoupons();
   } else if (tabId === 'tab-accounts') {
     fetchAdminAccounts();
+  } else if (tabId === 'tab-reviews') {
+    fetchAdminReviews();
+  } else if (tabId === 'tab-contacts') {
+    fetchAdminContacts();
+    contactsPollInterval = setInterval(() => fetchAdminContacts(true), 5000);
   } else if (tabId === 'tab-audit-logs') {
     fetchAdminAuditLogs();
   } else if (tabId === 'tab-homepage-settings') {
@@ -1436,4 +1462,1027 @@ async function renderSelectedFeaturedCars() {
     }
   }
   container.innerHTML = html;
+}
+
+// ================= CATEGORIES MANAGEMENT CRUD =================
+async function fetchAdminCategories() {
+  const tbody = document.getElementById('admin-categories-table-body');
+  if (!tbody) return;
+  tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">Đang tải danh sách danh mục...</td></tr>';
+
+  try {
+    const res = await fetch('/api/categories?all=true');
+    const data = await res.json();
+
+    if (data.success) {
+      if (data.data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">Không có danh mục nào.</td></tr>';
+        return;
+      }
+
+      let html = '';
+      data.data.forEach(cat => {
+        let actions = `
+          <div class="action-btn-group">
+            <button class="action-btn" onclick="openEditCategoryModal('${cat._id}')" title="Sửa"><i class="fas fa-edit"></i></button>
+            <button class="action-btn btn-danger-hover" onclick="deleteCategoryItem('${cat._id}')" title="Xóa"><i class="fas fa-trash-alt"></i></button>
+          </div>
+        `;
+
+        html += `
+          <tr>
+            <td><strong>${cat.name}</strong></td>
+            <td>${cat.slug}</td>
+            <td>${cat.description || '—'}</td>
+            <td>${cat.sortOrder}</td>
+            <td><span class="badge-status ${cat.isActive ? 'completed' : 'cancelled'}">${cat.isActive ? 'Hoạt động' : 'Tạm khóa'}</span></td>
+            <td>${actions}</td>
+          </tr>
+        `;
+      });
+      tbody.innerHTML = html;
+    }
+  } catch (err) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #d90429;">Lỗi tải dữ liệu.</td></tr>';
+  }
+}
+
+function setupCategoryFormSubmit() {
+  const form = document.getElementById('admin-create-category-form');
+  if (!form) return;
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const name = document.getElementById('category-name-input').value.trim();
+    const description = document.getElementById('category-desc-input').value.trim();
+    const sortOrder = document.getElementById('category-sort-input').value;
+
+    try {
+      const res = await fetch('/api/categories', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, description, sortOrder })
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        showToast('Tạo danh mục kiểu dáng thành công!', 'success');
+        form.reset();
+        fetchAdminCategories();
+      } else {
+        showToast(data.message || 'Tạo danh mục thất bại.', 'error');
+      }
+    } catch (err) {
+      showToast('Lỗi máy chủ.', 'error');
+    }
+  });
+}
+
+window.openEditCategoryModal = async function(id) {
+  try {
+    const res = await fetch('/api/categories?all=true');
+    const data = await res.json();
+    if (data.success) {
+      const cat = data.data.find(c => c._id === id);
+      if (cat) {
+        document.getElementById('edit-category-id').value = cat._id;
+        document.getElementById('edit-category-name').value = cat.name;
+        document.getElementById('edit-category-slug').value = cat.slug;
+        document.getElementById('edit-category-description').value = cat.description || '';
+        document.getElementById('edit-category-sort').value = cat.sortOrder || 0;
+        document.getElementById('edit-category-isActive').checked = cat.isActive;
+
+        document.getElementById('edit-category-modal').style.display = 'flex';
+        
+        const nameInput = document.getElementById('edit-category-name');
+        const slugInput = document.getElementById('edit-category-slug');
+        nameInput.oninput = function() {
+          slugInput.value = clientGenerateSlug(this.value);
+        };
+      }
+    }
+  } catch (err) {
+    showToast('Lỗi lấy thông tin danh mục.', 'error');
+  }
+};
+
+window.closeEditCategoryModal = function() {
+  document.getElementById('edit-category-modal').style.display = 'none';
+};
+
+window.submitEditCategoryForm = async function() {
+  const id = document.getElementById('edit-category-id').value;
+  const name = document.getElementById('edit-category-name').value.trim();
+  const description = document.getElementById('edit-category-description').value.trim();
+  const sortOrder = document.getElementById('edit-category-sort').value;
+  const isActive = document.getElementById('edit-category-isActive').checked;
+
+  try {
+    const res = await fetch(`/api/categories/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, description, sortOrder, isActive })
+    });
+    const data = await res.json();
+
+    if (data.success) {
+      showToast('Cập nhật danh mục thành công!', 'success');
+      closeEditCategoryModal();
+      fetchAdminCategories();
+    } else {
+      showToast(data.message || 'Cập nhật thất bại.', 'error');
+    }
+  } catch (err) {
+    showToast('Lỗi máy chủ.', 'error');
+  }
+};
+
+window.deleteCategoryItem = function(id) {
+  if (confirm('Bạn có chắc chắn muốn xóa danh mục này? Các xe liên quan sẽ trở thành chưa phân loại.')) {
+    fetch(`/api/categories/${id}`, { method: 'DELETE' })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          showToast('Xóa danh mục thành công!', 'success');
+          fetchAdminCategories();
+        } else {
+          showToast(data.message || 'Xóa danh mục thất bại.', 'error');
+        }
+      })
+      .catch(() => showToast('Lỗi máy chủ.', 'error'));
+  }
+};
+
+function clientGenerateSlug(text) {
+  return text.toString().toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/[^\w\-]+/g, '')
+    .replace(/\-\-+/g, '-')
+    .replace(/^-+/, '')
+    .replace(/-+$/, '');
+}
+
+// ================= COLLECTIONS =================
+async function fetchAdminCollections() {
+  const tbody = document.getElementById('admin-collections-table-body');
+  if (!tbody) return;
+  tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">Đang tải danh sách bộ sưu tập...</td></tr>';
+
+  try {
+    const res = await fetch('/api/collections/admin/all');
+    const data = await res.json();
+
+    if (data.success) {
+      if (data.data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">Không có bộ sưu tập nào.</td></tr>';
+        return;
+      }
+
+      let html = '';
+      data.data.forEach(col => {
+        const coverImg = col.image ? `<img src="${col.image}" style="max-height: 50px; border-radius: 4px;">` : '—';
+        html += `
+          <tr>
+            <td><strong>${col.name}</strong></td>
+            <td>${col.slug}</td>
+            <td>${col.description || '—'}</td>
+            <td>${coverImg}</td>
+            <td>
+              <button class="action-btn btn-danger-hover" onclick="deleteCollectionItem('${col._id}')" title="Xóa"><i class="fas fa-trash-alt"></i></button>
+            </td>
+          </tr>
+        `;
+      });
+      tbody.innerHTML = html;
+    }
+  } catch (err) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #d90429;">Lỗi tải dữ liệu.</td></tr>';
+  }
+}
+
+function setupCollectionFormSubmit() {
+  const form = document.getElementById('admin-create-collection-form');
+  if (!form) return;
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const name = document.getElementById('collection-name-input').value.trim();
+    const description = document.getElementById('collection-desc-input').value.trim();
+    const image = document.getElementById('collection-image-url').value.trim();
+
+    try {
+      const res = await fetch('/api/collections/admin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, description, image })
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        showToast('Tạo bộ sưu tập thành công!', 'success');
+        form.reset();
+        fetchAdminCollections();
+      } else {
+        showToast(data.message || 'Tạo bộ sưu tập thất bại.', 'error');
+      }
+    } catch (err) {
+      showToast('Lỗi máy chủ.', 'error');
+    }
+  });
+}
+
+window.deleteCollectionItem = function(id) {
+  if (confirm('Bạn có chắc chắn muốn xóa bộ sưu tập này?')) {
+    fetch(`/api/collections/admin/${id}`, { method: 'DELETE' })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          showToast('Xóa bộ sưu tập thành công!', 'success');
+          fetchAdminCollections();
+        } else {
+          showToast(data.message || 'Xóa thất bại.', 'error');
+        }
+      })
+      .catch(() => showToast('Lỗi máy chủ.', 'error'));
+  }
+};
+
+// ================= APPOINTMENTS =================
+async function fetchAdminAppointments() {
+  const tbody = document.getElementById('admin-appointments-table-body');
+  if (!tbody) return;
+  tbody.innerHTML = '<tr><td colspan="7" style="text-align: center;">Đang tải danh sách lịch hẹn...</td></tr>';
+
+  try {
+    const res = await fetch('/api/appointments');
+    const data = await res.json();
+
+    if (data.success) {
+      if (data.data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center;">Không có lịch hẹn nào.</td></tr>';
+        return;
+      }
+
+      let html = '';
+      data.data.forEach(apt => {
+        const carName = apt.car ? `${apt.car.name} (${apt.car.code})` : '—';
+        const dateStr = new Date(apt.appointmentDate).toLocaleDateString('vi-VN');
+        const actions = `
+          <div class="action-btn-group">
+            <button class="action-btn" onclick="updateAppointmentStatusAdmin('${apt._id}', 'confirmed')" title="Xác nhận"><i class="fas fa-check"></i></button>
+            <button class="action-btn" onclick="updateAppointmentStatusAdmin('${apt._id}', 'visited')" title="Khách đã đến"><i class="fas fa-user-check"></i></button>
+            <button class="action-btn btn-danger-hover" onclick="updateAppointmentStatusAdmin('${apt._id}', 'cancelled')" title="Hủy lịch"><i class="fas fa-times"></i></button>
+          </div>
+        `;
+
+        html += `
+          <tr>
+            <td>${apt.customerInfo.fullName} <br><small>${apt.customerInfo.phone}</small></td>
+            <td>${carName}</td>
+            <td>${apt.showroom || '—'}</td>
+            <td>${dateStr} <br>${apt.appointmentTime}</td>
+            <td><span class="badge-status ${apt.status}">${apt.status}</span></td>
+            <td><input type="text" id="aptnote-${apt._id}" value="${apt.staffNote || ''}" style="width: 100%; background: #222; border: 1px solid #444; color: #fff; padding: 5px;"></td>
+            <td>${actions}</td>
+          </tr>
+        `;
+      });
+      tbody.innerHTML = html;
+    }
+  } catch (err) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: #d90429;">Lỗi tải dữ liệu.</td></tr>';
+  }
+}
+
+window.updateAppointmentStatusAdmin = async function(id, status) {
+  const note = document.getElementById(`aptnote-${id}`).value;
+  try {
+    const res = await fetch(`/api/appointments/${id}/status`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status, staffNote: note })
+    });
+    if (res.ok) {
+      showToast('Đã cập nhật trạng thái lịch hẹn!', 'success');
+      fetchAdminAppointments();
+    } else {
+      showToast('Cập nhật thất bại.', 'error');
+    }
+  } catch (e) {
+    showToast('Lỗi máy chủ.', 'error');
+  }
+};
+
+// ================= TEST DRIVES =================
+async function fetchAdminTestDrives() {
+  const tbody = document.getElementById('admin-testdrives-table-body');
+  if (!tbody) return;
+  tbody.innerHTML = '<tr><td colspan="8" style="text-align: center;">Đang tải danh sách lịch lái thử...</td></tr>';
+
+  try {
+    const res = await fetch('/api/test-drives');
+    const data = await res.json();
+
+    if (data.success) {
+      if (data.data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align: center;">Không có lịch lái thử nào.</td></tr>';
+        return;
+      }
+
+      let html = '';
+      data.data.forEach(td => {
+        const carName = td.car ? `${td.car.name} (${td.car.code})` : '—';
+        const dateStr = new Date(td.testDriveDate).toLocaleDateString('vi-VN');
+        const licenseLink = td.licenseImage ? `<a href="${td.licenseImage}" target="_blank" style="color: var(--color-gold); text-decoration: underline;">Xem ảnh GPLX</a>` : '—';
+        const actions = `
+          <div class="action-btn-group">
+            <button class="action-btn" onclick="updateTestDriveStatusAdmin('${td._id}', 'confirmed')" title="Xác nhận"><i class="fas fa-check"></i></button>
+            <button class="action-btn" onclick="updateTestDriveStatusAdmin('${td._id}', 'completed')" title="Hoàn thành"><i class="fas fa-check-double"></i></button>
+            <button class="action-btn btn-danger-hover" onclick="updateTestDriveStatusAdmin('${td._id}', 'cancelled')" title="Hủy lái thử"><i class="fas fa-times"></i></button>
+          </div>
+        `;
+
+        html += `
+          <tr>
+            <td>${td.customerInfo.fullName} <br><small>${td.customerInfo.phone}</small></td>
+            <td>${carName}</td>
+            <td>${td.showroom || '—'}</td>
+            <td>${dateStr} <br>${td.testDriveTime}</td>
+            <td>${licenseLink}</td>
+            <td><span class="badge-status ${td.status}">${td.status}</span></td>
+            <td><input type="text" id="tdnote-${td._id}" value="${td.staffNote || ''}" style="width: 100%; background: #222; border: 1px solid #444; color: #fff; padding: 5px;"></td>
+            <td>${actions}</td>
+          </tr>
+        `;
+      });
+      tbody.innerHTML = html;
+    }
+  } catch (err) {
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: #d90429;">Lỗi tải dữ liệu.</td></tr>';
+  }
+}
+
+window.updateTestDriveStatusAdmin = async function(id, status) {
+  const note = document.getElementById(`tdnote-${id}`).value;
+  try {
+    const res = await fetch(`/api/test-drives/${id}/status`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status, staffNote: note })
+    });
+    if (res.ok) {
+      showToast('Đã cập nhật trạng thái lái thử!', 'success');
+      fetchAdminTestDrives();
+    } else {
+      showToast('Cập nhật thất bại.', 'error');
+    }
+  } catch (e) {
+    showToast('Lỗi máy chủ.', 'error');
+  }
+};
+
+// ================= DEPOSITS =================
+async function fetchAdminDeposits() {
+  const tbody = document.getElementById('admin-deposits-table-body');
+  if (!tbody) return;
+  tbody.innerHTML = '<tr><td colspan="8" style="text-align: center;">Đang tải danh sách giao dịch đặt cọc...</td></tr>';
+
+  try {
+    const res = await fetch('/api/deposits');
+    const data = await res.json();
+
+    if (data.success) {
+      if (data.data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align: center;">Không có giao dịch đặt cọc nào.</td></tr>';
+        return;
+      }
+
+      let html = '';
+      data.data.forEach(dep => {
+        const carName = dep.car ? `${dep.car.name} (${dep.car.code})` : '—';
+        const proofLink = dep.paymentProof ? `<a href="${dep.paymentProof}" target="_blank"><img src="${dep.paymentProof}" style="max-height: 45px; border-radius: 4px; cursor: pointer; border: 1px solid #444;"></a>` : '—';
+        
+        let actions = '';
+        if (dep.status === 'pending_confirm') {
+          actions += `
+            <button class="action-btn" onclick="confirmDepositAdmin('${dep._id}')" title="Duyệt nhận cọc" style="background: rgba(85, 166, 48, 0.1); border-color: rgba(85, 166, 48, 0.3); color: #55a630;"><i class="fas fa-check-circle"></i></button>
+            <button class="action-btn btn-danger-hover" onclick="cancelDepositAdmin('${dep._id}')" title="Từ chối/Hủy"><i class="fas fa-times-circle"></i></button>
+          `;
+        } else if (dep.status === 'confirmed') {
+          actions += `
+            <button class="action-btn" onclick="convertDepositToOrderAdmin('${dep._id}')" title="Tạo Hợp Đồng Hóa Đơn" style="background: rgba(222, 193, 113, 0.1); border-color: rgba(222, 193, 113, 0.3); color: var(--color-gold); width: auto; padding: 0 10px; display: flex; align-items: center; gap: 4px; font-size: 0.75rem;"><i class="fas fa-file-contract"></i> Lên Hợp Đồng</button>
+          `;
+        } else {
+          actions = '—';
+        }
+
+        html += `
+          <tr>
+            <td><strong>${dep.depositCode}</strong></td>
+            <td>${dep.customerInfo.fullName} <br><small>${dep.customerInfo.phone}</small></td>
+            <td>${carName}</td>
+            <td>${formatCurrencyVND(dep.depositAmount)}</td>
+            <td style="text-align: center;">${proofLink}</td>
+            <td><span class="badge-status ${dep.status}">${dep.status}</span></td>
+            <td><input type="text" id="depnote-${dep._id}" value="${dep.staffNote || ''}" style="width: 100%; background: #222; border: 1px solid #444; color: #fff; padding: 5px;"></td>
+            <td><div style="display: flex; gap: 8px; justify-content: center;">${actions}</div></td>
+          </tr>
+        `;
+      });
+      tbody.innerHTML = html;
+    }
+  } catch (err) {
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: #d90429;">Lỗi tải dữ liệu.</td></tr>';
+  }
+}
+
+window.confirmDepositAdmin = async function(id) {
+  const note = document.getElementById(`depnote-${id}`).value;
+  try {
+    const res = await fetch(`/api/deposits/${id}/confirm`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ staffNote: note })
+    });
+    if (res.ok) {
+      showToast('Đã duyệt nhận cọc thành công!', 'success');
+      fetchAdminDeposits();
+    } else {
+      showToast('Duyệt nhận cọc thất bại.', 'error');
+    }
+  } catch (e) {
+    showToast('Lỗi máy chủ.', 'error');
+  }
+};
+
+window.cancelDepositAdmin = async function(id) {
+  const note = document.getElementById(`depnote-${id}`).value;
+  try {
+    const res = await fetch(`/api/deposits/${id}/cancel`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ staffNote: note })
+    });
+    if (res.ok) {
+      showToast('Đã hủy giao dịch cọc!', 'success');
+      fetchAdminDeposits();
+    } else {
+      showToast('Hủy cọc thất bại.', 'error');
+    }
+  } catch (e) {
+    showToast('Lỗi máy chủ.', 'error');
+  }
+};
+
+window.convertDepositToOrderAdmin = async function(id) {
+  try {
+    const res = await fetch(`/api/deposits/${id}/convert-to-order`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' }
+    });
+    const data = await res.json();
+    if (data.success) {
+      showToast('Tạo hợp đồng hóa đơn thành công! Hãy kiểm tra tab Đơn Hàng.', 'success');
+      fetchAdminDeposits();
+    } else {
+      showToast(data.message || 'Tạo hợp đồng thất bại.', 'error');
+    }
+  } catch (e) {
+    showToast('Lỗi máy chủ.', 'error');
+  }
+};
+
+// ================= ORDERS =================
+async function fetchAdminOrders() {
+  const tbody = document.getElementById('admin-orders-table-body');
+  if (!tbody) return;
+  tbody.innerHTML = '<tr><td colspan="8" style="text-align: center;">Đang tải danh sách đơn hàng...</td></tr>';
+
+  try {
+    const res = await fetch('/api/orders');
+    const data = await res.json();
+
+    if (data.success) {
+      if (data.data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align: center;">Không có hợp đồng đơn hàng nào.</td></tr>';
+        return;
+      }
+
+      let html = '';
+      data.data.forEach(ord => {
+        const carName = ord.carInfo ? `${ord.carInfo.name}` : '—';
+        
+        let actions = '';
+        if (ord.orderStatus === 'waiting_full_payment') {
+          actions += `<button class="action-btn" onclick="confirmOrderPaymentAdmin('${ord._id}')" title="Xác nhận đủ tiền" style="background: rgba(85, 166, 48, 0.1); border-color: rgba(85, 166, 48, 0.3); color: #55a630;"><i class="fas fa-check-double"></i></button>`;
+        } else if (ord.orderStatus === 'paid' || ord.orderStatus === 'delivering' || ord.orderStatus === 'processing_paperwork') {
+          actions += `<button class="action-btn" onclick="completeVehicleHandoverAdmin('${ord._id}')" title="Bàn giao xe" style="background: rgba(222, 193, 113, 0.1); border-color: rgba(222, 193, 113, 0.3); color: var(--color-gold);"><i class="fas fa-truck-loading"></i> Bàn Giao</button>`;
+        }
+        
+        if (ord.orderStatus !== 'completed' && ord.orderStatus !== 'cancelled') {
+          actions += `<button class="action-btn btn-danger-hover" onclick="cancelOrderItemAdmin('${ord._id}')" title="Hủy Hợp Đồng"><i class="fas fa-ban"></i></button>`;
+        }
+
+        if (!actions) actions = '—';
+
+        html += `
+          <tr>
+            <td><strong>${ord.orderCode}</strong></td>
+            <td>${ord.customerInfo.fullName} <br><small>${ord.customerInfo.phone}</small></td>
+            <td>${carName}</td>
+            <td>${formatCurrencyVND(ord.total)}</td>
+            <td>${formatCurrencyVND(ord.remainingAmount)}</td>
+            <td><span class="badge-status ${ord.paymentStatus}">${ord.paymentStatus}</span></td>
+            <td><span class="badge-status ${ord.orderStatus}">${ord.orderStatus}</span></td>
+            <td><div style="display: flex; gap: 8px;">${actions}</div></td>
+          </tr>
+        `;
+      });
+      tbody.innerHTML = html;
+    }
+  } catch (err) {
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: #d90429;">Lỗi tải dữ liệu.</td></tr>';
+  }
+}
+
+window.confirmOrderPaymentAdmin = async function(id) {
+  if (confirm('Xác nhận khách hàng đã thanh toán đầy đủ 100% giá trị hợp đồng này?')) {
+    try {
+      const res = await fetch(`/api/orders/${id}/confirm-payment`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      if (res.ok) {
+        showToast('Xác nhận thanh toán thành công!', 'success');
+        fetchAdminOrders();
+      } else {
+        showToast('Xác nhận thất bại.', 'error');
+      }
+    } catch (e) {
+      showToast('Lỗi máy chủ.', 'error');
+    }
+  }
+};
+
+window.completeVehicleHandoverAdmin = async function(id) {
+  if (confirm('Xác nhận đã bàn giao xe thành công và hoàn tất các thủ tục giấy tờ?')) {
+    try {
+      const res = await fetch(`/api/orders/${id}/complete`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      if (res.ok) {
+        showToast('Hợp đồng đã hoàn thành, bàn giao xe thành công!', 'success');
+        fetchAdminOrders();
+      } else {
+        showToast('Cập nhật thất bại.', 'error');
+      }
+    } catch (e) {
+      showToast('Lỗi máy chủ.', 'error');
+    }
+  }
+};
+
+window.cancelOrderItemAdmin = async function(id) {
+  if (confirm('Bạn có chắc chắn muốn hủy hợp đồng mua bán siêu xe này? Hành động này sẽ hoàn trả trạng thái của xe.')) {
+    try {
+      const res = await fetch(`/api/orders/${id}/cancel`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      if (res.ok) {
+        showToast('Đã hủy hợp đồng thành công!', 'success');
+        fetchAdminOrders();
+      } else {
+        showToast('Hủy hợp đồng thất bại.', 'error');
+      }
+    } catch (e) {
+      showToast('Lỗi máy chủ.', 'error');
+    }
+  }
+};
+
+// ================= REVIEWS =================
+async function fetchAdminReviews() {
+  const tbody = document.getElementById('admin-reviews-table-body');
+  if (!tbody) return;
+  tbody.innerHTML = '<tr><td colspan="7" style="text-align: center;">Đang tải danh sách đánh giá...</td></tr>';
+
+  try {
+    const res = await fetch('/api/reviews');
+    const data = await res.json();
+
+    if (data.success) {
+      if (data.data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center;">Không có đánh giá nào từ khách hàng.</td></tr>';
+        return;
+      }
+
+      let html = '';
+      data.data.forEach(rev => {
+        const customerName = rev.user ? rev.user.fullName : 'Khách ẩn danh';
+        const carName = rev.car ? `${rev.car.name} (${rev.car.code})` : 'Showroom / Nhân viên';
+        const stars = '★'.repeat(rev.rating) + '☆'.repeat(5 - rev.rating);
+        
+        let visibilityBtn = '';
+        if (rev.isVisible) {
+          visibilityBtn = `<button class="action-btn" onclick="toggleReviewVisibility('${rev._id}', false)" title="Ẩn hiển thị" style="color: #55a630;"><i class="fas fa-eye"></i></button>`;
+        } else {
+          visibilityBtn = `<button class="action-btn" onclick="toggleReviewVisibility('${rev._id}', true)" title="Hiện hiển thị" style="color: #666;"><i class="fas fa-eye-slash"></i></button>`;
+        }
+
+        const replyContent = rev.replyComment ? `<div style="font-size: 0.75rem; color: var(--color-gold); margin-top: 5px;"><strong>Trả lời:</strong> ${rev.replyComment} <br><small>Bởi ${rev.repliedBy ? rev.repliedBy.fullName : 'Showroom'}</small></div>` : '—';
+
+        html += `
+          <tr>
+            <td><strong>${customerName}</strong></td>
+            <td>${carName}</td>
+            <td style="color: var(--color-gold); font-size: 1.1rem; white-space: nowrap;">${stars}</td>
+            <td>${rev.comment}</td>
+            <td style="text-align: center;">${rev.isVisible ? 'Hiển thị' : 'Ẩn'}</td>
+            <td>${replyContent}</td>
+            <td>
+              <div class="action-btn-group">
+                ${visibilityBtn}
+                <button class="action-btn" onclick="openReplyReviewModal('${rev._id}')" title="Phản hồi"><i class="fas fa-reply"></i></button>
+                <button class="action-btn btn-danger-hover" onclick="deleteReviewItem('${rev._id}')" title="Xóa đánh giá"><i class="fas fa-trash-alt"></i></button>
+              </div>
+            </td>
+          </tr>
+        `;
+      });
+      tbody.innerHTML = html;
+    }
+  } catch (err) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: #d90429;">Lỗi tải dữ liệu.</td></tr>';
+  }
+}
+
+window.toggleReviewVisibility = async function(id, isVisible) {
+  try {
+    const res = await fetch(`/api/reviews/${id}/visibility`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ isVisible })
+    });
+    if (res.ok) {
+      showToast('Đã cập nhật trạng thái hiển thị đánh giá!', 'success');
+      fetchAdminReviews();
+    } else {
+      showToast('Cập nhật thất bại.', 'error');
+    }
+  } catch (e) {
+    showToast('Lỗi máy chủ.', 'error');
+  }
+};
+
+window.deleteReviewItem = function(id) {
+  if (confirm('Bạn có chắc chắn muốn xóa đánh giá này khỏi hệ thống?')) {
+    fetch(`/api/reviews/${id}`, { method: 'DELETE' })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          showToast('Xóa đánh giá thành công!', 'success');
+          fetchAdminReviews();
+        } else {
+          showToast(data.message || 'Xóa đánh giá thất bại.', 'error');
+        }
+      })
+      .catch(() => showToast('Lỗi máy chủ.', 'error'));
+  }
+};
+
+window.openReplyReviewModal = async function(id) {
+  try {
+    const res = await fetch('/api/reviews');
+    const data = await res.json();
+    if (data.success) {
+      const rev = data.data.find(r => r._id === id);
+      if (rev) {
+        document.getElementById('reply-review-id').value = rev._id;
+        document.getElementById('reply-review-customer-comment').textContent = `"${rev.comment}"`;
+        document.getElementById('reply-review-comment-input').value = rev.replyComment || '';
+        document.getElementById('reply-review-modal').style.display = 'flex';
+      }
+    }
+  } catch (err) {
+    showToast('Lỗi lấy thông tin đánh giá.', 'error');
+  }
+};
+
+window.closeReplyReviewModal = function() {
+  document.getElementById('reply-review-modal').style.display = 'none';
+};
+
+window.submitReplyReviewForm = async function() {
+  const id = document.getElementById('reply-review-id').value;
+  const replyComment = document.getElementById('reply-review-comment-input').value.trim();
+
+  if (!replyComment) {
+    showToast('Vui lòng nhập nội dung phản hồi.', 'error');
+    return;
+  }
+
+  try {
+    const res = await fetch(`/api/reviews/${id}/reply`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ replyComment })
+    });
+    const data = await res.json();
+
+    if (data.success) {
+      showToast('Đã gửi phản hồi đánh giá thành công!', 'success');
+      closeReplyReviewModal();
+      fetchAdminReviews();
+    } else {
+      showToast(data.message || 'Gửi phản hồi thất bại.', 'error');
+    }
+  } catch (err) {
+    showToast('Lỗi máy chủ.', 'error');
+  }
+};
+
+// ================= CONTACTS & CSKH MESSENGER =================
+let currentMessengerStream = 'support';
+let activeThreadId = null;
+let allContactsData = [];
+let messengerEventsBound = false;
+
+window.switchMessengerStream = function(streamType) {
+  currentMessengerStream = streamType;
+  
+  const btnCSKH = document.getElementById('btn-stream-cskh');
+  const btnContact = document.getElementById('btn-stream-contact');
+  
+  if (btnCSKH && btnContact) {
+    if (streamType === 'support') {
+      btnCSKH.classList.add('active');
+      btnContact.classList.remove('active');
+    } else {
+      btnCSKH.classList.remove('active');
+      btnContact.classList.add('active');
+    }
+  }
+  
+  activeThreadId = null;
+  const activeContainer = document.getElementById('chat-active-container');
+  const noThreadContainer = document.getElementById('chat-no-thread');
+  if (activeContainer) activeContainer.style.display = 'none';
+  if (noThreadContainer) noThreadContainer.style.display = 'flex';
+  
+  renderMessengerThreads();
+};
+
+async function fetchAdminContacts(silent = false) {
+  const threadsList = document.getElementById('messenger-threads-list');
+  if (!threadsList) return;
+  
+  if (!silent && allContactsData.length === 0) {
+    threadsList.innerHTML = '<div style="text-align: center; color: #888; padding: 20px;">Đang tải hội thoại...</div>';
+  }
+
+  try {
+    const res = await fetch('/api/contact-message');
+    const data = await res.json();
+
+    if (data.success) {
+      allContactsData = data.data;
+      renderMessengerThreads();
+      
+      if (activeThreadId) {
+        const activeThread = allContactsData.find(t => t._id === activeThreadId);
+        if (activeThread) {
+          renderActiveThreadDetails(activeThread);
+        }
+      }
+    }
+  } catch (err) {
+    console.error('Lỗi tải tin nhắn:', err);
+    if (!silent) {
+      threadsList.innerHTML = '<div style="text-align: center; color: #d90429; padding: 20px;">Lỗi tải dữ liệu.</div>';
+    }
+  }
+}
+
+function renderMessengerThreads() {
+  const threadsList = document.getElementById('messenger-threads-list');
+  if (!threadsList) return;
+
+  const filteredThreads = allContactsData.filter(t => {
+    if (currentMessengerStream === 'support') {
+      return t.type === 'support';
+    } else {
+      return t.type !== 'support';
+    }
+  });
+
+  if (filteredThreads.length === 0) {
+    threadsList.innerHTML = `<div style="text-align: center; color: #555; padding: 30px; font-size: 0.85rem;">Không có cuộc hội thoại nào.</div>`;
+    return;
+  }
+
+  let html = '';
+  filteredThreads.forEach(t => {
+    const isActive = t._id === activeThreadId ? 'active' : '';
+    const lastMsg = t.messages && t.messages.length > 0 ? t.messages[t.messages.length - 1].content : t.message;
+    const timeStr = new Date(t.updatedAt || t.createdAt).toLocaleDateString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+    const isNew = t.status === 'new' ? '<span class="thread-status-dot new"></span>' : '';
+    
+    html += `
+      <div class="thread-item ${isActive}" onclick="selectMessengerThread('${t._id}')">
+        <div class="thread-item-header">
+          <span class="thread-name">${escapeHtml(t.fullName)}</span>
+          <span class="thread-time">${timeStr}</span>
+        </div>
+        <div class="thread-preview">${escapeHtml(lastMsg)}</div>
+        ${isNew}
+      </div>
+    `;
+  });
+  threadsList.innerHTML = html;
+}
+
+window.selectMessengerThread = function(threadId) {
+  activeThreadId = threadId;
+  
+  const items = document.querySelectorAll('.thread-item');
+  items.forEach(el => el.classList.remove('active'));
+  
+  const thread = allContactsData.find(t => t._id === threadId);
+  if (!thread) return;
+  
+  renderMessengerThreads();
+
+  const noThread = document.getElementById('chat-no-thread');
+  const activeContainer = document.getElementById('chat-active-container');
+  if (noThread) noThread.style.display = 'none';
+  if (activeContainer) activeContainer.style.display = 'flex';
+
+  document.getElementById('chat-header-name').textContent = thread.fullName;
+  document.getElementById('chat-header-meta').textContent = `Email: ${thread.email} | SĐT: ${thread.phone || '—'}`;
+  
+  document.getElementById('chat-status-select').value = thread.status;
+  document.getElementById('chat-staff-note').value = thread.staffNote || '';
+
+  const carInfo = document.getElementById('chat-car-info');
+  const carName = document.getElementById('chat-car-name');
+  if (thread.relatedCar) {
+    carInfo.style.display = 'block';
+    carName.textContent = `${thread.relatedCar.name} (${thread.relatedCar.code})`;
+  } else {
+    carInfo.style.display = 'none';
+  }
+
+  renderActiveThreadDetails(thread);
+  setupMessengerEventsOnce();
+};
+
+function renderActiveThreadDetails(thread) {
+  const container = document.getElementById('chat-messages-container');
+  const inputContainer = document.getElementById('chat-input-container');
+  const contactContainer = document.getElementById('contact-view-container');
+
+  if (currentMessengerStream === 'support') {
+    if (inputContainer) inputContainer.style.display = 'flex';
+    if (contactContainer) contactContainer.style.display = 'none';
+    
+    let messagesHtml = '';
+    const messages = thread.messages || [];
+    
+    if (messages.length === 0) {
+      messagesHtml = '<p style="text-align: center; color: #555; font-size: 0.8rem; margin-top: 30px;">Chưa có tin nhắn nào trong phòng chat.</p>';
+    } else {
+      messages.forEach(msg => {
+        const isIncoming = msg.sender === 'user';
+        const senderLabel = isIncoming ? msg.senderName : `${msg.senderName} (${msg.sender === 'admin' ? 'Admin' : 'Staff'})`;
+        const timeStr = new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        
+        messagesHtml += `
+          <div class="chat-message ${isIncoming ? 'incoming' : 'outgoing'}">
+            <span class="chat-message-sender">${escapeHtml(senderLabel)}</span>
+            <span>${escapeHtml(msg.content)}</span>
+            <span class="chat-message-time">${timeStr}</span>
+          </div>
+        `;
+      });
+    }
+    container.innerHTML = messagesHtml;
+    container.scrollTop = container.scrollHeight;
+  } else {
+    if (inputContainer) inputContainer.style.display = 'none';
+    if (contactContainer) contactContainer.style.display = 'flex';
+    
+    document.getElementById('contact-subject').textContent = thread.subject || 'Liên Hệ & Tư Vấn';
+    document.getElementById('contact-initial-message').textContent = thread.message;
+
+    const timeStr = new Date(thread.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    container.innerHTML = `
+      <div class="chat-message incoming" style="max-width: 90%;">
+        <span class="chat-message-sender">${escapeHtml(thread.fullName)}</span>
+        <div style="font-weight: 600; margin-bottom: 5px; color: var(--color-gold);">${escapeHtml(thread.subject || 'Chủ đề: —')}</div>
+        <div>${escapeHtml(thread.message)}</div>
+        <span class="chat-message-time">${timeStr}</span>
+      </div>
+    `;
+  }
+}
+
+function setupMessengerEventsOnce() {
+  if (messengerEventsBound) return;
+  messengerEventsBound = true;
+
+  const saveStatusBtn = document.getElementById('btn-save-chat-status');
+  if (saveStatusBtn) {
+    saveStatusBtn.addEventListener('click', async () => {
+      if (!activeThreadId) return;
+      const status = document.getElementById('chat-status-select').value;
+      const note = document.getElementById('chat-staff-note').value;
+      try {
+        const res = await fetch(`/api/contact-message/${activeThreadId}/status`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status, staffNote: note })
+        });
+        if (res.ok) {
+          showToast('Đã lưu trạng thái cuộc trò chuyện!', 'success');
+          fetchAdminContacts(true);
+        } else {
+          showToast('Cập nhật thất bại.', 'error');
+        }
+      } catch (err) {
+        showToast('Lỗi kết nối máy chủ.', 'error');
+      }
+    });
+  }
+
+  const saveNoteBtn = document.getElementById('btn-save-staff-note');
+  if (saveNoteBtn) {
+    saveNoteBtn.addEventListener('click', async () => {
+      if (!activeThreadId) return;
+      const status = document.getElementById('chat-status-select').value;
+      const note = document.getElementById('chat-staff-note').value;
+      try {
+        const res = await fetch(`/api/contact-message/${activeThreadId}/status`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status, staffNote: note })
+        });
+        if (res.ok) {
+          showToast('Đã lưu ghi chú nội bộ!', 'success');
+          fetchAdminContacts(true);
+        } else {
+          showToast('Cập nhật ghi chú thất bại.', 'error');
+        }
+      } catch (err) {
+        showToast('Lỗi kết nối máy chủ.', 'error');
+      }
+    });
+  }
+
+  const sendReplyBtn = document.getElementById('btn-send-chat-reply');
+  const chatInput = document.getElementById('chat-input-message');
+  
+  const submitReply = async () => {
+    if (!activeThreadId) return;
+    const text = chatInput.value.trim();
+    if (!text) return;
+    
+    chatInput.value = '';
+    try {
+      const res = await fetch(`/api/contact-message/thread/${activeThreadId}/reply`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: text })
+      });
+      const data = await res.json();
+      if (data.success) {
+        await fetchAdminContacts(true);
+      } else {
+        showToast(data.message || 'Lỗi gửi tin nhắn.', 'error');
+      }
+    } catch (err) {
+      showToast('Lỗi gửi tin nhắn.', 'error');
+    }
+  };
+
+  if (sendReplyBtn) sendReplyBtn.addEventListener('click', submitReply);
+  if (chatInput) {
+    chatInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        submitReply();
+      }
+    });
+  }
+}
+
+function escapeHtml(unsafe) {
+  if (!unsafe) return '';
+  return unsafe
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }

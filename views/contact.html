@@ -102,6 +102,22 @@
   <script src="/public/js/main.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
+      // Auto-fill contact info if logged in
+      fetch('/api/auth/me')
+        .then(res => res.json())
+        .then(data => {
+          if (data.success && data.user) {
+            const user = data.user;
+            const fullNameInput = document.getElementById('fullName');
+            const emailInput = document.getElementById('email');
+            const phoneInput = document.getElementById('phone');
+            if (fullNameInput) fullNameInput.value = user.fullName || '';
+            if (emailInput) emailInput.value = user.email || '';
+            if (phoneInput) phoneInput.value = user.phone || '';
+          }
+        })
+        .catch(err => console.error('Error auto-filling contact form:', err));
+
       const form = document.getElementById('contact-form');
       if (form) {
         form.addEventListener('submit', async (e) => {

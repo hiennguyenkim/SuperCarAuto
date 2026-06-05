@@ -96,6 +96,54 @@ exports.deleteReview = async (req, res) => {
     await Review.findByIdAndDelete(req.params.id);
     res.status(200).json({ success: true, message: 'Đã xóa đánh giá khỏi hệ thống.' });
   } catch (err) {
+    console.error('Lỗi xóa đánh giá:', err);
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// @desc    Get all reviews (Staff/Admin)
+// @route   GET /api/reviews
+// @access  Private/Staff
+exports.getAllReviews = async (req, res) => {
+  try {
+    const reviews = await Review.find()
+      .populate('user', 'fullName email phone')
+      .populate('car', 'name images code slug')
+      .populate('staff', 'fullName')
+      .populate('repliedBy', 'fullName')
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({ success: true, count: reviews.length, data: reviews });
+  } catch (err) {
+    console.error('Lỗi lấy tất cả đánh giá:', err);
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// @desc    Reply to a review (Staff/Admin)
+// @route   PUT /api/reviews/:id/reply
+// @access  Private/Staff
+exports.replyReview = async (req, res) => {
+  try {
+    const { replyComment } = req.body;
+    if (!replyComment || replyComment.trim() === '') {
+      return res.status(400).json({ success: false, message: 'Nội dung phản hồi không được để trống.' });
+    }
+
+    let review = await Review.findById(req.params.id);
+    if (!review) {
+      return res.status(404).json({ message: 'Không tìm thấy đánh giá.' });
+    }
+
+    review.replyComment = replyComment.trim();
+    review.repliedBy = req.user.id;
+    review.repliedAt = new Date();
+
+    await review.save();
+
+    res.status(200).json({ success: true, message: 'Phản hồi đánh giá thành công', data: review });
+  } catch (err) {
+    console.error('Lỗi phản hồi đánh giá:', err);
     res.status(500).json({ message: err.message });
   }
 };

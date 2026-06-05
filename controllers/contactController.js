@@ -80,3 +80,94 @@ exports.deleteContactMessage = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
+// @desc    Create support message thread or append to existing thread
+// @route   POST /api/contact-message/support
+// @access  Public
+exports.createSupportMessage = async (req, res) => {
+  try {
+    const { threadId, fullName, email, phone, message } = req.body;
+
+    if (threadId) {
+      const thread = await ContactMessage.findById(threadId);
+      if (!thread) {
+        return res.status(404).json({ message: 'Không tìm thấy cuộc trò chuyện.' });
+      }
+      thread.messages.push({
+        sender: 'user',
+        senderName: thread.fullName,
+        content: message
+      });
+      thread.status = 'new';
+      await thread.save();
+      return res.status(200).json({ success: true, data: thread });
+    } else {
+      if (!fullName || !email || !message) {
+        return res.status(400).json({ message: 'Vui lòng cung cấp đầy đủ Tên, Email và Tin nhắn.' });
+      }
+      const newThread = await ContactMessage.create({
+        fullName,
+        email,
+        phone,
+        subject: 'Yêu cầu hỗ trợ CSKH',
+        message: message,
+        type: 'support',
+        messages: [{
+          sender: 'user',
+          senderName: fullName,
+          content: message
+        }]
+      });
+      return res.status(201).json({ success: true, data: newThread });
+    }
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// @desc    Get support message thread history
+// @route   GET /api/contact-message/thread/:id
+// @access  Public
+exports.getThread = async (req, res) => {
+  try {
+    const thread = await ContactMessage.findById(req.params.id)
+      .populate('relatedCar', 'name code slug')
+      .populate('assignedStaff', 'fullName email');
+    if (!thread) {
+      return res.status(404).json({ message: 'Không tìm thấy cuộc trò chuyện.' });
+    }
+    res.status(200).json({ success: true, data: thread });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// @desc    Reply to a support message thread
+// @route   POST /api/contact-message/thread/:id/reply
+// @access  Private/Staff
+exports.replyToThread = async (req, res) => {
+  try {
+    const { message } = req.body;
+    if (!message) {
+      return res.status(400).json({ message: 'Nội dung tin nhắn trả lời không được để trống.' });
+    }
+    
+    const thread = await ContactMessage.findById(req.params.id);
+    if (!thread) {
+      return res.status(404).json({ message: 'Không tìm thấy cuộc trò chuyện.' });
+    }
+
+    thread.messages.push({
+      sender: req.user.role === 'admin' ? 'admin' : 'staff',
+      senderName: req.user.fullName,
+      content: message
+    });
+    thread.status = 'processing';
+    thread.assignedStaff = req.user._id;
+
+    await thread.save();
+    res.status(200).json({ success: true, data: thread });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};

@@ -5,7 +5,7 @@ const CarSchema = new mongoose.Schema({
   name: { type: String, required: true },
   slug: { type: String, required: true, unique: true },
   brand: { type: mongoose.Schema.Types.ObjectId, ref: 'Brand', required: true },
-  category: { type: mongoose.Schema.Types.ObjectId, ref: 'Category', required: true },
+  category: { type: mongoose.Schema.Types.ObjectId, ref: 'Category' },
   collection: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Collection' }],
   model: String,
   version: String,

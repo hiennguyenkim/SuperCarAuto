@@ -232,6 +232,54 @@
           </div>
         </div>
 
+        <!-- 3.5. Categories Management CRUD -->
+        <div class="dashboard-content-tab" id="tab-categories">
+          <div class="dashboard-tab-header">
+            <h2>Quản Lý Danh Mục Kiểu Dáng Xe</h2>
+          </div>
+          
+          <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 40px; align-items: start;">
+            <!-- Category table -->
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Tên Danh Mục</th>
+                    <th>Slug</th>
+                    <th>Mô Tả</th>
+                    <th>Thứ Tự</th>
+                    <th>Trạng Thái</th>
+                    <th>Thao Tác</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-categories-table-body">
+                  <!-- Loaded dynamically -->
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Create Category form -->
+            <div class="dashboard-form-container" style="padding: 25px;">
+              <h3 style="margin-bottom: 20px; font-family: var(--font-heading); color: var(--color-gold);">Thêm Danh Mục Mới</h3>
+              <form id="admin-create-category-form">
+                <div class="form-group">
+                  <label for="category-name-input">Tên Danh Mục *</label>
+                  <input type="text" id="category-name-input" class="form-control" placeholder="Ví dụ: Sedan, SUV, Coupe..." required>
+                </div>
+                <div class="form-group">
+                  <label for="category-desc-input">Mô Tả Danh Mục</label>
+                  <textarea id="category-desc-input" class="form-control" rows="2"></textarea>
+                </div>
+                <div class="form-group">
+                  <label for="category-sort-input">Thứ Tự Sắp Xếp</label>
+                  <input type="number" id="category-sort-input" class="form-control" value="0">
+                </div>
+                <button type="submit" class="btn-gold" style="width: 100%;">Tạo Danh Mục</button>
+              </form>
+            </div>
+          </div>
+        </div>
+
         <!-- 4. Coupons Management CRUD -->
         <div class="dashboard-content-tab" id="tab-coupons">
           <div class="dashboard-tab-header">
@@ -513,6 +561,262 @@
             </div>
           </div>
         </div>
+
+        <!-- 8. Collections Tab -->
+        <div class="dashboard-content-tab" id="tab-collections">
+          <div class="dashboard-tab-header">
+            <h2>Quản Lý Bộ Sưu Tập Xe</h2>
+          </div>
+          <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 40px; align-items: start;">
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Tên Bộ Sưu Tập</th>
+                    <th>Slug</th>
+                    <th>Mô Tả</th>
+                    <th>Ảnh Bìa</th>
+                    <th>Thao Tác</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-collections-table-body">
+                  <!-- Loaded dynamically -->
+                </tbody>
+              </table>
+            </div>
+
+            <div class="dashboard-form-container" style="padding: 25px;">
+              <h3 style="margin-bottom: 20px; font-family: var(--font-heading); color: var(--color-gold);">Thêm Bộ Sưu Tập Mới</h3>
+              <form id="admin-create-collection-form">
+                <div class="form-group">
+                  <label for="collection-name-input">Tên Bộ Sưu Tập *</label>
+                  <input type="text" id="collection-name-input" class="form-control" placeholder="Ví dụ: Hypercar, Track Special..." required>
+                </div>
+                <div class="form-group">
+                  <label for="collection-desc-input">Mô Tả Bộ Sưu Tập</label>
+                  <textarea id="collection-desc-input" class="form-control" rows="2"></textarea>
+                </div>
+                <div class="form-group">
+                  <label for="collection-image-url">Đường Dẫn Ảnh Bìa (URL)</label>
+                  <input type="text" id="collection-image-url" class="form-control" placeholder="https://unsplash.com/...">
+                </div>
+                <button type="submit" class="btn-gold" style="width: 100%;">Tạo Bộ Sưu Tập</button>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- 9. Appointments Tab -->
+        <div class="dashboard-content-tab" id="tab-appointments">
+          <div class="dashboard-tab-header">
+            <h2>Lịch Hẹn Xem Xe Tại Showroom</h2>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Khách Hàng</th>
+                  <th>Siêu Xe Xem</th>
+                  <th>Showroom</th>
+                  <th>Thời Gian Hẹn</th>
+                  <th>Trạng Thái</th>
+                  <th>Ghi Chú Tư Vấn</th>
+                  <th>Cập Nhật Lịch</th>
+                </tr>
+              </thead>
+              <tbody id="admin-appointments-table-body">
+                <!-- Loaded dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 10. Test Drives Tab -->
+        <div class="dashboard-content-tab" id="tab-test-drives">
+          <div class="dashboard-tab-header">
+            <h2>Yêu Cầu Hẹn Lái Thử Xe</h2>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Khách Hàng</th>
+                  <th>Siêu Xe Lái Thử</th>
+                  <th>Showroom Hẹn</th>
+                  <th>Thời Gian</th>
+                  <th>Bằng Lái (GPLX)</th>
+                  <th>Trạng Thái</th>
+                  <th>Ghi Chú Điều Kiện</th>
+                  <th>Cập Nhật</th>
+                </tr>
+              </thead>
+              <tbody id="admin-testdrives-table-body">
+                <!-- Loaded dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 11. Deposits Tab -->
+        <div class="dashboard-content-tab" id="tab-deposits">
+          <div class="dashboard-tab-header">
+            <h2>Giao Dịch Đặt Cọc Giữ Xe</h2>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Mã Cọc</th>
+                  <th>Khách Hàng</th>
+                  <th>Siêu Xe Giữ</th>
+                  <th>Số Tiền Cọc</th>
+                  <th>Ảnh Chuyển Khoản</th>
+                  <th>Trạng Thái</th>
+                  <th>Ghi Chú Ngân Hàng</th>
+                  <th>Thao Tác Duyệt</th>
+                </tr>
+              </thead>
+              <tbody id="admin-deposits-table-body">
+                <!-- Loaded dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 12. Orders Tab -->
+        <div class="dashboard-content-tab" id="tab-orders">
+          <div class="dashboard-tab-header">
+            <h2>Danh Sách Đơn Hàng Mua Xe</h2>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Mã Hợp Đồng</th>
+                  <th>Khách Hàng</th>
+                  <th>Siêu Xe Mua</th>
+                  <th>Tổng Giá Trị</th>
+                  <th>Còn Lại</th>
+                  <th>Tiền Thanh Toán</th>
+                  <th>Trạng Thái Đơn</th>
+                  <th>Xử Lý Hợp Đồng</th>
+                </tr>
+              </thead>
+              <tbody id="admin-orders-table-body">
+                <!-- Loaded dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 13. Reviews Tab -->
+        <div class="dashboard-content-tab" id="tab-reviews">
+          <div class="dashboard-tab-header">
+            <h2>Đánh Giá Của Khách Hàng</h2>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Khách Hàng</th>
+                  <th>Đánh Giá Xe</th>
+                  <th>Số Sao</th>
+                  <th>Nội Dung Nhận Xét</th>
+                  <th>Hiển Thị</th>
+                  <th>Phản Hồi Từ Showroom</th>
+                  <th>Thao Tác</th>
+                </tr>
+              </thead>
+              <tbody id="admin-reviews-table-body">
+                <!-- Loaded dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 14. Contacts Tab (Messenger Consolidated UI) -->
+        <div class="dashboard-content-tab" id="tab-contacts">
+          <div class="dashboard-tab-header">
+            <h2>Quản Lý Liên Hệ & CSKH</h2>
+          </div>
+          
+          <div class="messenger-container">
+            <!-- Left Sidebar: Streams and Threads -->
+            <div class="messenger-sidebar">
+              <div class="messenger-streams">
+                <button type="button" class="stream-btn active" id="btn-stream-cskh" onclick="switchMessengerStream('support')">CSKH Chat</button>
+                <button type="button" class="stream-btn" id="btn-stream-contact" onclick="switchMessengerStream('contact')">Liên Hệ</button>
+              </div>
+              <div class="thread-list" id="messenger-threads-list">
+                <!-- Loaded dynamically -->
+              </div>
+            </div>
+
+            <!-- Right Panel: Conversation -->
+            <div class="messenger-chat-area">
+              <!-- No Active Conversation state -->
+              <div id="chat-no-thread" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: #555;">
+                <i class="fab fa-facebook-messenger" style="font-size: 3rem; margin-bottom: 15px; color: var(--color-gold); opacity: 0.4;"></i>
+                <p style="font-size: 0.9rem;">Chọn một cuộc hội thoại hoặc yêu cầu liên hệ từ danh sách</p>
+              </div>
+
+              <!-- Active Conversation state -->
+              <div id="chat-active-container" style="display: none; flex-direction: column; height: 100%;">
+                <!-- Header -->
+                <div class="chat-header">
+                  <div>
+                    <h4 id="chat-header-name" style="margin: 0 0 4px 0; color: #fff; font-size: 1rem;">Họ Tên Khách Hàng</h4>
+                    <span id="chat-header-meta" style="font-size: 0.75rem; color: #888;">Email | SĐT</span>
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 10px;">
+                    <select id="chat-status-select" class="form-control" style="width: auto; padding: 6px 12px; font-size: 0.8rem; background: #222; border: 1px solid rgba(255,255,255,0.1); color: #fff; border-radius: 4px;">
+                      <option value="new">Mới</option>
+                      <option value="processing">Đang xử lý</option>
+                      <option value="done">Hoàn thành</option>
+                      <option value="rejected">Từ chối</option>
+                    </select>
+                    <button type="button" class="btn-gold" id="btn-save-chat-status" style="padding: 6px 15px; font-size: 0.8rem; height: auto; border: none; font-weight: bold; border-radius: 4px; color: #000;">Lưu</button>
+                  </div>
+                </div>
+
+                <!-- Related Car Info bar -->
+                <div id="chat-car-info" style="padding: 8px 20px; background: rgba(222, 193, 113, 0.05); border-bottom: 1px solid rgba(255,255,255,0.03); font-size: 0.8rem; color: #ccc; display: none;">
+                  <span><i class="fas fa-car" style="color: var(--color-gold); margin-right: 5px;"></i> Xe quan tâm: <strong id="chat-car-name" style="color: var(--color-gold);"></strong></span>
+                </div>
+
+                <!-- Messages area -->
+                <div class="chat-messages-body" id="chat-messages-container">
+                  <!-- Loaded dynamically -->
+                </div>
+
+                <!-- Staff Note bar -->
+                <div class="chat-note-section" style="padding: 10px 20px; background: #141414; border-top: 1px solid rgba(255,255,255,0.05); display: flex; gap: 10px; align-items: center;">
+                  <span style="font-size: 0.75rem; color: #888; white-space: nowrap;"><i class="fas fa-pen-fancy" style="margin-right: 4px;"></i> Ghi chú nội bộ:</span>
+                  <input type="text" id="chat-staff-note" placeholder="Thêm ghi chú xử lý của nhân viên..." style="flex: 1; padding: 6px 12px; font-size: 0.8rem; background: #222; border: 1px solid rgba(255,255,255,0.1); color: #fff; border-radius: 4px;">
+                  <button type="button" class="btn-outline" id="btn-save-staff-note" style="padding: 6px 15px; font-size: 0.8rem; height: auto; border-radius: 4px;">Lưu Note</button>
+                </div>
+
+                <!-- CSKH text chat input -->
+                <div class="chat-input-area" id="chat-input-container">
+                  <input type="text" id="chat-input-message" placeholder="Nhập tin nhắn phản hồi..." style="flex: 1; padding: 10px 15px; background: #222; border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color: #fff; font-size: 0.85rem;">
+                  <button type="button" class="btn-gold" id="btn-send-chat-reply" style="padding: 10px 20px; border-radius: 6px; font-weight: bold; color: #000; border: none; cursor: pointer;"><i class="fas fa-paper-plane" style="margin-right: 5px;"></i> Gửi</button>
+                </div>
+
+                <!-- General Contact View Area (No live input, shows detailed contact subject/message) -->
+                <div class="contact-view-area" id="contact-view-container" style="padding: 20px; border-top: 1px solid rgba(255,255,255,0.07); background: #161616; display: none; flex-direction: column; gap: 12px;">
+                  <div style="background: rgba(255,255,255,0.02); padding: 15px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05);">
+                    <h5 style="color: var(--color-gold); margin: 0 0 8px 0; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px;">Chủ đề liên hệ:</h5>
+                    <p id="contact-subject" style="font-size: 0.9rem; font-weight: 600; color: #fff; margin: 0 0 15px 0;"></p>
+                    
+                    <h5 style="color: var(--color-gold); margin: 0 0 8px 0; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px;">Nội dung liên hệ ban đầu:</h5>
+                    <p id="contact-initial-message" style="font-size: 0.9rem; line-height: 1.5; color: #eee; margin: 0; white-space: pre-line;"></p>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
       </main>
     </div>
   </div>
@@ -778,6 +1082,68 @@
       <div class="modal-actions" style="margin-top: 25px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px; display: flex; justify-content: flex-end; gap: 15px;">
         <button type="button" class="btn-dark" onclick="closeEditCouponModal()" style="padding: 10px 25px; cursor: pointer;">Hủy</button>
         <button type="button" class="btn-gold" onclick="submitEditCouponForm()" style="padding: 10px 25px; cursor: pointer;">Lưu Thay Đổi</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Category Modal -->
+  <div id="edit-category-modal" class="custom-modal">
+    <div class="modal-content" style="max-width: 500px; padding: 30px; background: #161616; border: var(--glass-border); border-radius: 4px; color: #fff;">
+      <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 15px;">
+        <h3 style="color: var(--color-gold); font-family: var(--font-heading); margin-bottom: 0;">Sửa Danh Mục Kiểu Dáng</h3>
+        <button type="button" class="btn-close-modal" onclick="closeEditCategoryModal()" style="background: none; border: none; color: #fff; font-size: 1.2rem; cursor: pointer;"><i class="fas fa-times"></i></button>
+      </div>
+      <form id="admin-edit-category-form">
+        <input type="hidden" id="edit-category-id">
+        <div class="form-group" style="margin-bottom: 15px;">
+          <label>Tên Danh Mục *</label>
+          <input type="text" id="edit-category-name" class="form-control" required>
+        </div>
+        <div class="form-group" style="margin-bottom: 15px;">
+          <label>Slug (Tự động tạo)</label>
+          <input type="text" id="edit-category-slug" class="form-control" readonly style="opacity: 0.7;">
+        </div>
+        <div class="form-group" style="margin-bottom: 15px;">
+          <label>Mô Tả</label>
+          <textarea id="edit-category-description" class="form-control" rows="3"></textarea>
+        </div>
+        <div class="form-group" style="margin-bottom: 15px;">
+          <label>Thứ Tự Sắp Xếp</label>
+          <input type="number" id="edit-category-sort" class="form-control" value="0">
+        </div>
+        <div class="form-group" style="display: flex; align-items: center; gap: 8px; margin-top: 15px;">
+          <input type="checkbox" id="edit-category-isActive" style="accent-color: var(--color-gold); width: 18px; height: 18px;">
+          <label for="edit-category-isActive" style="margin-bottom: 0; cursor: pointer;">Kích Hoạt (Hoạt Động)</label>
+        </div>
+      </form>
+      <div class="modal-actions" style="margin-top: 25px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px; display: flex; justify-content: flex-end; gap: 15px;">
+        <button type="button" class="btn-dark" onclick="closeEditCategoryModal()" style="padding: 10px 25px; cursor: pointer;">Hủy</button>
+        <button type="button" class="btn-gold" onclick="submitEditCategoryForm()" style="padding: 10px 25px; cursor: pointer;">Lưu Thay Đổi</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reply Review Modal -->
+  <div id="reply-review-modal" class="custom-modal">
+    <div class="modal-content" style="max-width: 500px; padding: 30px; background: #161616; border: var(--glass-border); border-radius: 4px; color: #fff;">
+      <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 15px;">
+        <h3 style="color: var(--color-gold); font-family: var(--font-heading); margin-bottom: 0;">Phản Hồi Đánh Giá</h3>
+        <button type="button" class="btn-close-modal" onclick="closeReplyReviewModal()" style="background: none; border: none; color: #fff; font-size: 1.2rem; cursor: pointer;"><i class="fas fa-times"></i></button>
+      </div>
+      <form id="admin-reply-review-form">
+        <input type="hidden" id="reply-review-id">
+        <div class="form-group" style="margin-bottom: 15px;">
+          <label>Nhận Xét Khách Hàng</label>
+          <div id="reply-review-customer-comment" style="background: rgba(255,255,255,0.02); border: var(--glass-border); padding: 15px; border-radius: 4px; font-size: 0.85rem; color: var(--color-silver); margin-top: 5px;"></div>
+        </div>
+        <div class="form-group" style="margin-bottom: 15px;">
+          <label for="reply-review-comment-input">Nội Dung Phản Hồi Từ Showroom *</label>
+          <textarea id="reply-review-comment-input" class="form-control" rows="4" placeholder="Nhập câu trả lời phản hồi khách hàng..." required></textarea>
+        </div>
+      </form>
+      <div class="modal-actions" style="margin-top: 25px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px; display: flex; justify-content: flex-end; gap: 15px;">
+        <button type="button" class="btn-dark" onclick="closeReplyReviewModal()" style="padding: 10px 25px; cursor: pointer;">Hủy</button>
+        <button type="button" class="btn-gold" onclick="submitReplyReviewForm()" style="padding: 10px 25px; cursor: pointer;">Gửi Phản Hồi</button>
       </div>
     </div>
   </div>
