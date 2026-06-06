@@ -120,7 +120,7 @@ exports.updateHeroBanner = async (req, res) => {
 // @access  Private/Admin
 exports.updateFeaturedCars = async (req, res) => {
   try {
-    const { title, subtitle, cars, isVisible } = req.body;
+    const { cars } = req.body;
     let settings = await SiteSetting.findOne();
     if (!settings) {
       settings = await SiteSetting.create({});
@@ -131,12 +131,7 @@ exports.updateFeaturedCars = async (req, res) => {
       carsList = typeof cars === 'string' ? JSON.parse(cars) : cars;
     }
 
-    settings.featuredCars = {
-      title,
-      subtitle,
-      cars: carsList,
-      isVisible: isVisible === 'true'
-    };
+    settings.featuredCars = carsList;
 
     await settings.save();
     res.status(200).json({ success: true, data: settings });

@@ -739,12 +739,7 @@ const seedData = async () => {
         image: 'https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?auto=format&fit=crop&w=1920&q=80',
         isVisible: true
       },
-      featuredCars: {
-        title: 'Bộ Sưu Tập Siêu Xe Nổi Bật',
-        subtitle: 'Tuyển chọn những kiệt tác cơ khí mạnh mẽ và đẳng cấp nhất đang có mặt tại showroom',
-        cars: [huracan._id, pista._id, gt3rs._id, gtBlackSeries._id],
-        isVisible: true
-      },
+      featuredCars: [huracan._id, pista._id, gt3rs._id, gtBlackSeries._id],
       featuredCollections: {
         title: 'Khám Phá Theo Bộ Sưu Tập',
         subtitle: 'Lựa chọn phong cách thượng lưu phù hợp với cá tính của riêng bạn',
